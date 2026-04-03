@@ -1,0 +1,26 @@
+# LLM
+groq
+
+# RAG & Embeddings
+langchain
+langchain-community
+langchain-groq
+sentence-transformers
+chromadb
+
+# Document Parsers
+pymupdf
+pdfplumber
+pandas
+openpyxl
+
+# Email parsing (built-in email lib, no install needed)
+
+# API
+fastapi
+uvicorn
+python-multipart
+pydantic
+
+# Utils
+python-dotenv
