@@ -19,26 +19,30 @@ from ingestor.chunker      import chunk_documents
 from vectorstore.chroma_store import add_chunks, clear_collection, collection_count
 
 
-def ingest_pdf(path: str):
-    print(f"[Ingest] Parsing PDF: {path}")
+def ingest_pdf(path: str, source_name: str = None):
+    name = source_name or Path(path).name
+    print(f"[Ingest] Parsing PDF: {name}")
     raw    = parse_pdf(path)
-    chunks = chunk_documents(raw)
+    chunks = chunk_documents(raw, source_name=name)
     add_chunks(chunks)
     print(f"[Ingest] PDF done — {len(chunks)} chunks added.")
 
 
-def ingest_excel(path: str):
-    print(f"[Ingest] Parsing Excel: {path}")
+
+def ingest_excel(path: str, source_name: str = None):
+    name = source_name or Path(path).name
+    print(f"[Ingest] Parsing Excel: {name}")
     raw    = parse_excel(path)
-    chunks = chunk_documents(raw)
+    chunks = chunk_documents(raw, source_name=name)
     add_chunks(chunks)
     print(f"[Ingest] Excel done — {len(chunks)} chunks added.")
 
 
-def ingest_eml(path: str):
-    print(f"[Ingest] Parsing email: {path}")
+def ingest_eml(path: str, source_name: str = None):
+    name = source_name or Path(path).name
+    print(f"[Ingest] Parsing email: {name}")
     raw    = parse_eml(path)
-    chunks = chunk_documents(raw)
+    chunks = chunk_documents(raw, source_name=name)
     add_chunks(chunks)
     print(f"[Ingest] Email done — {len(chunks)} chunks added.")
 

@@ -24,6 +24,15 @@ def detect_conflicts(query: str, chunks: list[dict]) -> dict:
             "trusted_chunk"   : chunks[0] if chunks else None,
             "all_chunks"      : chunks,
         }
+    
+    unique_sources = set(c.get("source", "") for c in chunks)
+    if len(unique_sources) <= 1:
+        return {
+            "has_conflict"    : False,
+            "conflict_summary": "",
+            "trusted_chunk"   : max(chunks, key=lambda c: c.get("score", 0)),
+            "all_chunks"      : chunks,
+        }
 
     # Build a summary of each chunk for the LLM to compare
     chunk_summaries = []

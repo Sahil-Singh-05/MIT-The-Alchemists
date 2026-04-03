@@ -44,11 +44,11 @@ async def upload_document(file: UploadFile = File(...)):
 
     try:
         if suffix == ".pdf":
-            ingest_pdf(tmp_path)
+            ingest_pdf(tmp_path, source_name=file.filename)
         elif suffix in (".xlsx", ".xls"):
-            ingest_excel(tmp_path)
+            ingest_excel(tmp_path, source_name=file.filename)
         elif suffix == ".eml":
-            ingest_eml(tmp_path)
+            ingest_eml(tmp_path, source_name=file.filename)
 
         return JSONResponse(content={
             "status"      : "success",
