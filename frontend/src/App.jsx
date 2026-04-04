@@ -1,7 +1,8 @@
-import { startTransition, useDeferredValue, useEffect, useRef, useState } from "react";
+import { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 const MESSAGE_META_STORAGE_KEY = "the-alchemists-message-meta-v1";
+const ADMIN_MAX_UPLOAD_BYTES = 200 * 1024 * 1024;
 
 const ASSETS = {
   brand: "/assets/image-Photoroom.png",
@@ -18,9 +19,68 @@ const NAV_ITEMS = [
   { id: "tickets", label: "Tickets", icon: ASSETS.ticket, accent: true },
 ];
 
+const ADMIN_NAV_ITEMS = [
+  { id: "uploads", label: "Uploads", icon: ASSETS.message },
+  { id: "tickets", label: "Tickets", icon: ASSETS.ticket },
+];
+
+const ADMIN_FILTERS = [
+  { id: "all", label: "All" },
+  { id: "pdf", label: "PDF" },
+  { id: "excel", label: "XLSX" },
+  { id: "email", label: "Email" },
+];
+
 const SHOWCASE_RECENTS = [
   { id: "mock-hackathon", title: "Hackathon Problem", placeholder: true },
   { id: "mock-anaconda", title: "Anaconda Setup", placeholder: true },
+];
+
+const ADMIN_MOCK_DOCUMENTS = [
+  {
+    id: "admin-doc-1",
+    name: "Company Policy.pdf",
+    type: "pdf",
+    size: "1.8 MB",
+    uploadedBy: "Admin",
+    uploadDate: "Aug 6, 2024",
+    category: "HR / Policy",
+    description:
+      "This document covers organizational policy updates, reimbursement notes, and employee support workflow references for the admin knowledge base.",
+  },
+  {
+    id: "admin-doc-2",
+    name: "Pricing.xlsx",
+    type: "excel",
+    size: "183 KB",
+    uploadedBy: "Admin",
+    uploadDate: "Sep 12, 2024",
+    category: "Finance / Report",
+    description:
+      "Contains pricing models, quarterly planning sheets, and spreadsheet tabs used to answer internal finance questions.",
+  },
+  {
+    id: "admin-doc-3",
+    name: "HR Threads.eml",
+    type: "email",
+    size: "510 KB",
+    uploadedBy: "Admin",
+    uploadDate: "Oct 2, 2024",
+    category: "Inbox / Email",
+    description:
+      "Email archive containing policy confirmations and operational clarifications that can be cited in grounded responses.",
+  },
+  {
+    id: "admin-doc-4",
+    name: "Refund Policy.pdf",
+    type: "pdf",
+    size: "2.4 MB",
+    uploadedBy: "Admin",
+    uploadDate: "Jul 17, 2024",
+    category: "Customer / Policy",
+    description:
+      "Details refund timelines, case-management rules, and policy exceptions for support and operations teams.",
+  },
 ];
 
 function buildUrl(path) {
@@ -149,6 +209,150 @@ function humanizeError(error) {
   return error instanceof Error ? error.message : "The backend is not responding yet.";
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatFileSize(bytes) {
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  if (bytes >= 1024) {
+    return `${Math.round(bytes / 1024)} KB`;
+  }
+
+  return `${bytes} B`;
+}
+
+function resolveAdminDocumentType(fileName) {
+  const lowerName = fileName.toLowerCase();
+
+  if (lowerName.endsWith(".pdf")) {
+    return "pdf";
+  }
+
+  if (lowerName.endsWith(".eml")) {
+    return "email";
+  }
+
+  if (lowerName.endsWith(".xlsx") || lowerName.endsWith(".xls")) {
+    return "excel";
+  }
+
+  return "";
+}
+
+function getAdminDocumentIcon(type) {
+  if (type === "pdf") {
+    return "fa-file-pdf-o";
+  }
+
+  if (type === "excel") {
+    return "fa-file-excel-o";
+  }
+
+  if (type === "email") {
+    return "fa-envelope-o";
+  }
+
+  return "fa-file-o";
+}
+
+function createMockPreviewMarkup(doc) {
+  return `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${escapeHtml(doc.name)}</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 32px;
+        background: #efe2fb;
+        color: #2d2357;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+      }
+      .viewer {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #ffffff;
+        border: 2px solid #b174e7;
+        border-radius: 24px;
+        padding: 28px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        color: #43348b;
+        font-size: 30px;
+      }
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .meta-item {
+        background: #f7f1ff;
+        border: 1px solid #dbc9f7;
+        border-radius: 14px;
+        padding: 14px 16px;
+      }
+      .label {
+        font-size: 12px;
+        color: #6f63a7;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .value {
+        font-size: 16px;
+        font-weight: 700;
+      }
+      .content {
+        background: #fbf8ff;
+        border: 1px solid #e5daf7;
+        border-radius: 16px;
+        padding: 20px;
+        font-size: 16px;
+        line-height: 1.7;
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="viewer">
+      <h1>${escapeHtml(doc.name)}</h1>
+      <div class="meta">
+        <div class="meta-item">
+          <div class="label">Type</div>
+          <div class="value">${escapeHtml(doc.type.toUpperCase())}</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Category</div>
+          <div class="value">${escapeHtml(doc.category)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Uploaded By</div>
+          <div class="value">${escapeHtml(doc.uploadedBy)}</div>
+        </div>
+        <div class="meta-item">
+          <div class="label">Upload Date</div>
+          <div class="value">${escapeHtml(doc.uploadDate)}</div>
+        </div>
+      </div>
+      <div class="content">${escapeHtml(doc.description)}</div>
+    </div>
+  </body>
+</html>`;
+}
+
 function TypingBubble() {
   return (
     <div className="typing-bubble" aria-label="Assistant is thinking">
@@ -160,6 +364,7 @@ function TypingBubble() {
 }
 
 function App() {
+  const [role, setRole] = useState("employee");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeView, setActiveView] = useState("chat");
   const [sessions, setSessions] = useState([]);
@@ -173,8 +378,15 @@ function App() {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [isBooting, setIsBooting] = useState(true);
   const [error, setError] = useState("");
+  const [adminView, setAdminView] = useState("uploads");
+  const [adminDocuments, setAdminDocuments] = useState([]);
+  const [adminFilter, setAdminFilter] = useState("all");
+  const [adminSearch, setAdminSearch] = useState("");
+  const [isAdminUploading, setIsAdminUploading] = useState(false);
+  const [adminUploadProgress, setAdminUploadProgress] = useState(0);
   const composerInputRef = useRef(null);
   const endRef = useRef(null);
+  const adminObjectUrlsRef = useRef(new Set());
 
   const deferredQuery = useDeferredValue(query);
   const visibleSessions = sessions.filter((session) =>
@@ -183,8 +395,32 @@ function App() {
   const recentSessions = sessions.length
     ? sessions.slice(0, 2).map((session) => ({ ...session, placeholder: false }))
     : SHOWCASE_RECENTS;
+  const filteredAdminDocuments = useMemo(() => {
+    return adminDocuments
+      .filter((doc) => (adminFilter === "all" ? true : doc.type === adminFilter))
+      .filter((doc) => doc.name.toLowerCase().includes(adminSearch.trim().toLowerCase()));
+  }, [adminDocuments, adminFilter, adminSearch]);
   const isLanding = activeView === "chat" && messages.length === 0 && !isLoadingSession;
-  const currentSession = sessions.find((session) => session.id === currentSessionId) ?? null;
+
+  function registerAdminObjectUrl(url) {
+    if (url?.startsWith("blob:")) {
+      adminObjectUrlsRef.current.add(url);
+    }
+
+    return url;
+  }
+
+  function revokeAdminObjectUrl(url) {
+    if (adminObjectUrlsRef.current.has(url)) {
+      URL.revokeObjectURL(url);
+      adminObjectUrlsRef.current.delete(url);
+    }
+  }
+
+  function buildAdminPreviewUrl(doc) {
+    const blob = new Blob([createMockPreviewMarkup(doc)], { type: "text/html" });
+    return registerAdminObjectUrl(URL.createObjectURL(blob));
+  }
 
   useEffect(() => {
     let ignore = false;
@@ -232,6 +468,22 @@ function App() {
     input.style.height = "0px";
     input.style.height = `${Math.min(input.scrollHeight, 220)}px`;
   }, [draft, activeView, messages.length]);
+
+  useEffect(() => {
+    const seededDocuments = ADMIN_MOCK_DOCUMENTS.map((doc) => ({
+      ...doc,
+      previewUrl: buildAdminPreviewUrl(doc),
+    }));
+
+    setAdminDocuments(seededDocuments);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      adminObjectUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      adminObjectUrlsRef.current.clear();
+    };
+  }, []);
 
   async function refreshSessions() {
     try {
@@ -372,6 +624,105 @@ function App() {
     }
   }
 
+  function handleEnterAdminMode() {
+    setRole("admin");
+    setSidebarOpen(true);
+    setAdminView("uploads");
+    setError("");
+  }
+
+  function handleExitAdminMode() {
+    setRole("employee");
+    setError("");
+  }
+
+  function handleAdminFilesAdded(fileList) {
+    if (isAdminUploading) {
+      return;
+    }
+
+    const files = Array.from(fileList ?? []);
+
+    if (!files.length) {
+      return;
+    }
+
+    const acceptedFiles = files.filter(
+      (file) => resolveAdminDocumentType(file.name) && file.size <= ADMIN_MAX_UPLOAD_BYTES,
+    );
+
+    if (!acceptedFiles.length) {
+      setError("Admins can upload PDF, Excel, or email files up to 200 MB.");
+      return;
+    }
+
+    setError(
+      acceptedFiles.length === files.length
+        ? ""
+        : "Some files were skipped. Admin uploads currently accept PDF, Excel, or email files up to 200 MB.",
+    );
+    setIsAdminUploading(true);
+    setAdminUploadProgress(0);
+
+    const process = window.setInterval(() => {
+      setAdminUploadProgress((previous) => {
+        const next = Math.min(previous + 20, 100);
+
+        if (next === 100) {
+          window.clearInterval(process);
+
+          const uploadedOn = new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          }).format(new Date());
+
+          const newDocs = acceptedFiles.map((file, index) => {
+            const type = resolveAdminDocumentType(file.name);
+
+            return {
+              id: `admin-upload-${Date.now()}-${index}`,
+              name: file.name,
+              type,
+              size: formatFileSize(file.size),
+              uploadedBy: "Admin",
+              uploadDate: uploadedOn,
+              category:
+                type === "pdf" ? "Policy / PDF" : type === "excel" ? "Data / Excel" : "Inbox / Email",
+              description: "Uploaded file preview opens in a new tab using the browser viewer.",
+              previewUrl: registerAdminObjectUrl(URL.createObjectURL(file)),
+            };
+          });
+
+          startTransition(() => {
+            setAdminDocuments((previousDocs) => [...newDocs, ...previousDocs]);
+          });
+
+          window.setTimeout(() => {
+            setIsAdminUploading(false);
+            setAdminUploadProgress(0);
+          }, 220);
+        }
+
+        return next;
+      });
+    }, 80);
+  }
+
+  function handleAdminFileInputChange(event) {
+    handleAdminFilesAdded(event.target.files);
+    event.target.value = "";
+  }
+
+  function handleAdminDocumentOpen(doc) {
+    if (!doc?.previewUrl) {
+      setError("Preview unavailable for this document.");
+      return;
+    }
+
+    window.open(doc.previewUrl, "_blank", "noopener,noreferrer");
+  }
+
   function renderComposer(isCompact = false) {
     return (
       <form
@@ -438,41 +789,39 @@ function App() {
           ) : null}
 
           {!isLoadingSession
-            ? messages.map((message, index) => {
-                return (
-                  <article
-                    key={`${message.timestamp}-${index}`}
-                    className={`message-card message-card--${message.role} ${
-                      message.isError ? "message-card--error" : ""
-                    }`}
-                  >
-                    <div className="message-card__meta">
-                      <span>{message.role === "user" ? "You" : "Alchemist"}</span>
-                      <time>{formatTimestamp(message.timestamp)}</time>
+            ? messages.map((message, index) => (
+                <article
+                  key={`${message.timestamp}-${index}`}
+                  className={`message-card message-card--${message.role} ${
+                    message.isError ? "message-card--error" : ""
+                  }`}
+                >
+                  <div className="message-card__meta">
+                    <span>{message.role === "user" ? "You" : "Alchemist"}</span>
+                    <time>{formatTimestamp(message.timestamp)}</time>
+                  </div>
+                  <p>{message.content}</p>
+
+                  {message.role === "assistant" && message.hasConflict ? (
+                    <div className="message-card__note">{message.conflictNote}</div>
+                  ) : null}
+
+                  {message.role === "assistant" && message.sources?.length ? (
+                    <div className="sources">
+                      {[...new Map(message.sources.map((source) => [source.file, source])).values()].map(
+                        (source) => (
+                          <span
+                            className="source-chip"
+                            key={`${source.file}-${source.location}-${source.date}`}
+                          >
+                            {source.file}
+                          </span>
+                        ),
+                      )}
                     </div>
-                    <p>{message.content}</p>
-
-                    {message.role === "assistant" && message.hasConflict ? (
-                      <div className="message-card__note">{message.conflictNote}</div>
-                    ) : null}
-
-                    {message.role === "assistant" && message.sources?.length ? (
-                      <div className="sources">
-                        {[...new Map(message.sources.map((source) => [source.file, source])).values()].map(
-                          (source) => (
-                            <span
-                              className="source-chip"
-                              key={`${source.file}-${source.location}-${source.date}`}
-                            >
-                              {source.file}
-                            </span>
-                          ),
-                        )}
-                      </div>
-                    ) : null}
-                  </article>
-                );
-              })
+                  ) : null}
+                </article>
+              ))
             : null}
 
           {isSubmitting ? (
@@ -508,24 +857,24 @@ function App() {
 
         <div className="panel-view__scroll">
           <div className="panel-grid">
-          {visibleSessions.length ? (
-            visibleSessions.map((session) => (
-              <button
-                className="panel-card"
-                key={session.id}
-                type="button"
-                onClick={() => openSession(session.id)}
-              >
-                <strong>{session.title}</strong>
-                <span>{session.message_count} messages</span>
-                <small>{formatTicketDate(session.created_at)}</small>
-              </button>
-            ))
-          ) : (
-            <div className="empty-card">
-              <p>No matching chats yet.</p>
-            </div>
-          )}
+            {visibleSessions.length ? (
+              visibleSessions.map((session) => (
+                <button
+                  className="panel-card"
+                  key={session.id}
+                  type="button"
+                  onClick={() => openSession(session.id)}
+                >
+                  <strong>{session.title}</strong>
+                  <span>{session.message_count} messages</span>
+                  <small>{formatTicketDate(session.created_at)}</small>
+                </button>
+              ))
+            ) : (
+              <div className="empty-card">
+                <p>No matching chats yet.</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -573,97 +922,289 @@ function App() {
     );
   }
 
-  return (
-    <div className={`app-shell ${sidebarOpen ? "app-shell--open" : "app-shell--collapsed"}`}>
-      <aside
-        className={`sidebar ${sidebarOpen ? "sidebar--open" : "sidebar--collapsed"}`}
-        onClick={handleSidebarClick}
-      >
-        <div className="sidebar__top">
-          <button className="sidebar__brand" type="button" onClick={handleNewChat}>
-            <img alt="The Alchemists" src={ASSETS.brand} />
+  function renderAdminUploadsView() {
+    return (
+      <section className="admin-dashboard">
+        <header className="admin-dashboard__topbar">
+          <h1>Upload Documents</h1>
+
+          <button className="admin-logout" type="button" onClick={handleExitAdminMode}>
+            <span>LOGOUT</span>
+            <i className="fa fa-sign-out" aria-hidden="true" />
           </button>
-          <img
-            alt="Alchemist"
-            className="sidebar__wordmark"
-            src={ASSETS.brandWordmark}
+        </header>
+
+        <label className={`admin-upload-card ${isAdminUploading ? "is-uploading" : ""}`}>
+          <input
+            type="file"
+            multiple
+            accept=".pdf,.xlsx,.xls,.eml"
+            onChange={handleAdminFileInputChange}
           />
-        </div>
+          <span className="admin-upload-card__icon" aria-hidden="true">
+            <i className="fa fa-upload" />
+          </span>
+          <strong>Choose Files</strong>
+          <span>(only PDF / Excel / Email)</span>
+          <small>Limit 200MB per file</small>
 
-        <nav className="sidebar__nav">
-          {NAV_ITEMS.map((item) => (
-            <button
-              className={`sidebar__nav-item ${activeView === item.id ? "is-active" : ""}`}
-              key={item.id}
-              type="button"
-              onClick={() => {
-                if (item.id === "chat") {
-                  handleNewChat();
-                  return;
-                }
-
-                setActiveView(item.id);
-                setError("");
-              }}
-            >
-              <img
-                alt=""
-                className={
-                  item.accent ? "sidebar__nav-icon sidebar__nav-icon--accent" : "sidebar__nav-icon"
-                }
-                src={item.icon}
+          {isAdminUploading ? (
+            <div className="admin-upload-card__progress">
+              <div
+                className="admin-upload-card__progress-bar"
+                style={{ width: `${adminUploadProgress}%` }}
               />
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
+            </div>
+          ) : null}
+        </label>
 
-        <div className="sidebar__section">
-          <div className="sidebar__section-header">
-            <span>Recents</span>
-            <small>v</small>
+        <section className="admin-library">
+          <div className="admin-library__tools">
+            <label className="admin-search">
+              <i className="fa fa-search" aria-hidden="true" />
+              <input
+                type="text"
+                value={adminSearch}
+                onChange={(event) => setAdminSearch(event.target.value)}
+                placeholder="Search documents"
+              />
+            </label>
+
+            <div className="admin-filters">
+              {ADMIN_FILTERS.map((filterItem) => (
+                <button
+                  className={adminFilter === filterItem.id ? "is-active" : ""}
+                  key={filterItem.id}
+                  type="button"
+                  onClick={() => setAdminFilter(filterItem.id)}
+                >
+                  {filterItem.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="sidebar__recents">
-            {recentSessions.map((session) => (
+          <div className="admin-doc-list">
+            {filteredAdminDocuments.length ? (
+              filteredAdminDocuments.map((doc) => (
+                <article className="admin-doc-row" key={doc.id}>
+                  <div className="admin-doc-row__meta">
+                    <span className={`admin-doc-row__icon admin-doc-row__icon--${doc.type}`}>
+                      <i className={`fa ${getAdminDocumentIcon(doc.type)}`} aria-hidden="true" />
+                    </span>
+                    <span className="admin-doc-row__name">{doc.name}</span>
+                  </div>
+
+                  <button type="button" onClick={() => handleAdminDocumentOpen(doc)}>
+                    View
+                  </button>
+                </article>
+              ))
+            ) : (
+              <div className="admin-empty-state">
+                <p>No admin documents match this filter yet.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </section>
+    );
+  }
+
+  function renderAdminTicketsView() {
+    return (
+      <section className="admin-dashboard">
+        <header className="admin-dashboard__topbar">
+          <h1>Tickets</h1>
+
+          <button className="admin-logout" type="button" onClick={handleExitAdminMode}>
+            <span>LOGOUT</span>
+            <i className="fa fa-sign-out" aria-hidden="true" />
+          </button>
+        </header>
+
+        <section className="admin-library admin-library--tickets">
+          <div className="admin-ticket-list">
+            {isBooting ? (
+              <div className="admin-empty-state">
+                <p>Loading tickets...</p>
+              </div>
+            ) : tickets.length ? (
+              tickets.map((ticket) => (
+                <article className="admin-ticket-row" key={ticket.ticket_id}>
+                  <div className="admin-ticket-row__main">
+                    <strong>{ticket.subject}</strong>
+                    <span>{ticket.client_name}</span>
+                  </div>
+
+                  <div className="admin-ticket-row__meta">
+                    <span>{ticket.status}</span>
+                    <small>
+                      {ticket.ticket_id} | {formatTicketDate(ticket.created_at)}
+                    </small>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <div className="admin-empty-state">
+                <p>No tickets yet.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </section>
+    );
+  }
+
+  function renderAdminShell() {
+    return (
+      <div className={`admin-shell ${sidebarOpen ? "admin-shell--open" : "admin-shell--collapsed"}`}>
+        <aside
+          className={`admin-sidebar ${sidebarOpen ? "admin-sidebar--open" : "admin-sidebar--collapsed"}`}
+          onClick={handleSidebarClick}
+        >
+          <div>
+            <div className="admin-sidebar__top">
+              <div className="admin-sidebar__brand">
+                <img alt="The Alchemists" src={ASSETS.brand} />
+                <span>ALCHEMIST</span>
+              </div>
+            </div>
+
+            <nav className="admin-sidebar__nav">
+              {ADMIN_NAV_ITEMS.map((item) => (
+                <button
+                  className={`admin-sidebar__nav-item ${adminView === item.id ? "is-active" : ""}`}
+                  key={item.id}
+                  type="button"
+                  onClick={() => setAdminView(item.id)}
+                >
+                  <img alt="" src={item.icon} />
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <div className="admin-sidebar__profile">
+            <img alt="" src={ASSETS.profile} />
+            <span>Admin</span>
+          </div>
+        </aside>
+
+        {sidebarOpen ? (
+          <button
+            aria-label="Collapse admin sidebar"
+            className="sidebar-scrim"
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+          />
+        ) : null}
+
+        <main className="admin-workspace">
+          {error ? <div className="admin-notice">{error}</div> : null}
+          {adminView === "uploads" ? renderAdminUploadsView() : renderAdminTicketsView()}
+        </main>
+      </div>
+    );
+  }
+
+  function renderEmployeeShell() {
+    return (
+      <div className={`app-shell ${sidebarOpen ? "app-shell--open" : "app-shell--collapsed"}`}>
+        <aside
+          className={`sidebar ${sidebarOpen ? "sidebar--open" : "sidebar--collapsed"}`}
+          onClick={handleSidebarClick}
+        >
+          <div className="sidebar__top">
+            <button className="sidebar__brand" type="button" onClick={handleNewChat}>
+              <img alt="The Alchemists" src={ASSETS.brand} />
+            </button>
+            <img alt="Alchemist" className="sidebar__wordmark" src={ASSETS.brandWordmark} />
+          </div>
+
+          <nav className="sidebar__nav">
+            {NAV_ITEMS.map((item) => (
               <button
-                className="sidebar__recent"
-                disabled={session.placeholder}
-                key={session.id}
+                className={`sidebar__nav-item ${activeView === item.id ? "is-active" : ""}`}
+                key={item.id}
                 type="button"
-                onClick={() => openSession(session.id)}
+                onClick={() => {
+                  if (item.id === "chat") {
+                    handleNewChat();
+                    return;
+                  }
+
+                  setActiveView(item.id);
+                  setError("");
+                }}
               >
-                {truncateLabel(session.title, 22)}
+                <img
+                  alt=""
+                  className={
+                    item.accent ? "sidebar__nav-icon sidebar__nav-icon--accent" : "sidebar__nav-icon"
+                  }
+                  src={item.icon}
+                />
+                <span>{item.label}</span>
               </button>
             ))}
+          </nav>
+
+          <div className="sidebar__section">
+            <div className="sidebar__section-header">
+              <span>Recents</span>
+              <small>v</small>
+            </div>
+
+            <div className="sidebar__recents">
+              {recentSessions.map((session) => (
+                <button
+                  className="sidebar__recent"
+                  disabled={session.placeholder}
+                  key={session.id}
+                  type="button"
+                  onClick={() => openSession(session.id)}
+                >
+                  {truncateLabel(session.title, 22)}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="sidebar__profile">
-          <img alt="" src={ASSETS.profile} />
-          <span>Sahil Singh</span>
-        </div>
-      </aside>
+          <button className="sidebar__role-switch" type="button" onClick={handleEnterAdminMode}>
+            <img alt="" src={ASSETS.brand} />
+            <span>Admin Mode</span>
+          </button>
 
-      {sidebarOpen ? (
-        <button
-          aria-label="Collapse sidebar"
-          className="sidebar-scrim"
-          type="button"
-          onClick={() => setSidebarOpen(false)}
-        />
-      ) : null}
+          <div className="sidebar__profile">
+            <img alt="" src={ASSETS.profile} />
+            <span>Sahil Singh</span>
+          </div>
+        </aside>
 
-      <main className="workspace">
-        {error ? <div className="workspace__notice">{error}</div> : null}
-        {isBooting ? <div className="workspace__status">Loading workspace...</div> : null}
+        {sidebarOpen ? (
+          <button
+            aria-label="Collapse sidebar"
+            className="sidebar-scrim"
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+          />
+        ) : null}
 
-        {activeView === "chat" ? renderChatView() : null}
-        {activeView === "search" ? renderSearchView() : null}
-        {activeView === "tickets" ? renderTicketsView() : null}
-      </main>
-    </div>
-  );
+        <main className="workspace">
+          {error ? <div className="workspace__notice">{error}</div> : null}
+          {isBooting ? <div className="workspace__status">Loading workspace...</div> : null}
+
+          {activeView === "chat" ? renderChatView() : null}
+          {activeView === "search" ? renderSearchView() : null}
+          {activeView === "tickets" ? renderTicketsView() : null}
+        </main>
+      </div>
+    );
+  }
+
+  return role === "admin" ? renderAdminShell() : renderEmployeeShell();
 }
 
 export default App;
