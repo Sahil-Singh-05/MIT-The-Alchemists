@@ -1346,6 +1346,29 @@ img {
   border: 2px solid #6b3f93;
   border-radius: 14px;
   background: rgba(245, 235, 255, 0.42);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.admin-doc-row:hover {
+  transform: translateY(-1px);
+  background: rgba(251, 245, 255, 0.62);
+}
+
+.admin-doc-row--pdf:hover {
+  border-color: rgba(179, 59, 100, 0.72);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.18),
+    0 0 22px rgba(214, 93, 133, 0.28),
+    0 12px 26px rgba(179, 59, 100, 0.14);
+}
+
+.admin-doc-row:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.46);
+  outline-offset: 2px;
 }
 
 .admin-doc-row__meta,
@@ -1426,6 +1449,192 @@ img {
   border-radius: 16px;
   color: #6b3f93;
   text-align: center;
+}
+
+.admin-doc-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  backdrop-filter: blur(5px);
+  background: rgba(107, 63, 147, 0.28);
+}
+
+.admin-doc-modal {
+  width: min(94vw, 800px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 28px;
+  border-radius: 24px;
+  background: rgba(255, 252, 255, 0.98);
+  box-shadow: 0 24px 44px rgba(64, 35, 100, 0.24);
+}
+
+.admin-doc-modal__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.admin-doc-modal__header h2 {
+  margin: 0;
+  color: #2a2753;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.admin-doc-modal__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.admin-doc-badge {
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 0.66rem;
+  line-height: 1.3;
+}
+
+.admin-doc-badge--pdf {
+  background: #ffe9ef;
+  color: #bf3d61;
+}
+
+.admin-doc-badge--excel {
+  background: #e2f5e7;
+  color: #31724f;
+}
+
+.admin-doc-badge--email {
+  background: #ebe6ff;
+  color: #6548c2;
+}
+
+.admin-doc-badge--indexed {
+  background: #dbf7e7;
+  color: #18734e;
+}
+
+.admin-doc-badge--category {
+  background: #ece7ff;
+  color: #6548c2;
+}
+
+.admin-doc-modal__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #f3efff;
+  color: #6548c2;
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.admin-doc-modal__close:hover {
+  transform: translateY(-1px);
+  background: #e9e1ff;
+}
+
+.admin-doc-modal__close .fa {
+  font-size: 2rem;
+}
+
+.admin-doc-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-doc-modal__card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid #ece6ff;
+  border-radius: 14px;
+  background: #f9f8ff;
+}
+
+.admin-doc-modal__card--wide {
+  grid-column: 1 / -1;
+}
+
+.admin-doc-modal__card span,
+.admin-doc-modal__summary,
+.admin-doc-modal__primary,
+.admin-doc-modal__secondary,
+.admin-doc-modal__card strong {
+  font-family: "Press Start 2P", monospace;
+}
+
+.admin-doc-modal__card span {
+  color: #6b6395;
+  font-size: 0.62rem;
+  line-height: 1.6;
+}
+
+.admin-doc-modal__card strong {
+  color: #2f2a55;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.admin-doc-modal__summary {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid #e8e3ff;
+  border-radius: 16px;
+  background: #fbfaff;
+  color: #4a4377;
+  font-size: 0.86rem;
+  line-height: 1.8;
+}
+
+.admin-doc-modal__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.admin-doc-modal__primary,
+.admin-doc-modal__secondary {
+  min-height: 56px;
+  padding: 0 20px;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.admin-doc-modal__primary {
+  background: #6f5cfd;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(85, 67, 211, 0.24);
+}
+
+.admin-doc-modal__primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(85, 67, 211, 0.3);
+}
+
+.admin-doc-modal__secondary {
+  color: #6548c2;
+  background: transparent;
 }
 
 @keyframes sidebar-enter {
@@ -1679,8 +1888,22 @@ img {
     align-items: flex-start;
   }
 
+  .admin-doc-modal {
+    padding: 20px;
+  }
+
+  .admin-doc-modal__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-doc-modal__actions {
+    flex-direction: column;
+  }
+
   .admin-doc-row button,
-  .admin-ticket-row__meta {
+  .admin-ticket-row__meta,
+  .admin-doc-modal__primary,
+  .admin-doc-modal__secondary {
     width: 100%;
   }
 

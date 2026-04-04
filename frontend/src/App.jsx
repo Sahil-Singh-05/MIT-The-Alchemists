@@ -330,6 +330,7 @@ function App() {
   const [adminDocuments, setAdminDocuments] = useState([]);
   const [adminFilter, setAdminFilter] = useState("all");
   const [adminSearch, setAdminSearch] = useState("");
+  const [selectedAdminDoc, setSelectedAdminDoc] = useState(null);
   const [isAdminUploading, setIsAdminUploading] = useState(false);
   const [adminUploadProgress, setAdminUploadProgress] = useState(0);
   const composerInputRef = useRef(null);
@@ -421,6 +422,20 @@ function App() {
       adminObjectUrlsRef.current.clear();
     };
   }, []);
+
+  useEffect(() => {
+    if (!error) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setError("");
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [error]);
 
   async function refreshSessions() {
     try {
@@ -570,6 +585,7 @@ function App() {
 
   function handleExitAdminMode() {
     setRole("employee");
+    setSelectedAdminDoc(null);
     setError("");
   }
 
@@ -628,11 +644,13 @@ function App() {
             size: formatFileSize(file.size),
             uploadedBy: "Admin",
             uploadDate: uploadedOn,
+            pages: type === "pdf" ? "Indexed" : type === "excel" ? "Workbook" : "Email",
             category:
               type === "pdf" ? "Policy / PDF" : type === "excel" ? "Data / Excel" : "Inbox / Email",
             description:
               response.message ??
               "Document uploaded and ingested into the knowledge base successfully.",
+            totalQueries: 0,
             previewUrl: registerAdminObjectUrl(URL.createObjectURL(file)),
           });
         } catch (uploadError) {
@@ -667,6 +685,14 @@ function App() {
   }
 
   function handleAdminDocumentOpen(doc) {
+    setSelectedAdminDoc(doc);
+  }
+
+  function handleAdminModalClose() {
+    setSelectedAdminDoc(null);
+  }
+
+  function handleAdminOpenViewer(doc) {
     if (!doc?.previewUrl) {
       setError("Preview unavailable for this document.");
       return;
@@ -939,7 +965,19 @@ function App() {
           <div className="admin-doc-list">
             {filteredAdminDocuments.length ? (
               filteredAdminDocuments.map((doc) => (
-                <article className="admin-doc-row" key={doc.id}>
+                <article
+                  className={`admin-doc-row admin-doc-row--${doc.type}`}
+                  key={doc.id}
+                  onClick={() => handleAdminDocumentOpen(doc)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleAdminDocumentOpen(doc);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                >
                   <div className="admin-doc-row__meta">
                     <span className={`admin-doc-row__icon admin-doc-row__icon--${doc.type}`}>
                       <i className={`fa ${getAdminDocumentIcon(doc.type)}`} aria-hidden="true" />
@@ -947,7 +985,13 @@ function App() {
                     <span className="admin-doc-row__name">{doc.name}</span>
                   </div>
 
-                  <button type="button" onClick={() => handleAdminDocumentOpen(doc)}>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleAdminDocumentOpen(doc);
+                    }}
+                  >
                     View
                   </button>
                 </article>
@@ -959,6 +1003,93 @@ function App() {
             )}
           </div>
         </section>
+
+        {selectedAdminDoc ? (
+          <div className="admin-doc-modal-overlay" onClick={handleAdminModalClose}>
+            <section
+              className="admin-doc-modal"
+              onClick={(event) => event.stopPropagation()}
+              aria-modal="true"
+              role="dialog"
+            >
+              <div className="admin-doc-modal__header">
+                <div>
+                  <h2>{selectedAdminDoc.name}</h2>
+                  <div className="admin-doc-modal__badges">
+                    <span className={`admin-doc-badge admin-doc-badge--${selectedAdminDoc.type}`}>
+                      {selectedAdminDoc.type === "excel"
+                        ? "XLSX"
+                        : selectedAdminDoc.type.toUpperCase()}
+                    </span>
+                    <span className="admin-doc-badge admin-doc-badge--indexed">Indexed</span>
+                    <span className="admin-doc-badge admin-doc-badge--category">
+                      {selectedAdminDoc.category}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  className="admin-doc-modal__close"
+                  type="button"
+                  onClick={handleAdminModalClose}
+                  aria-label="Close document details"
+                >
+                  <i className="fa fa-times" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="admin-doc-modal__grid">
+                <div className="admin-doc-modal__card">
+                  <span>File Size</span>
+                  <strong>{selectedAdminDoc.size}</strong>
+                </div>
+                <div className="admin-doc-modal__card">
+                  <span>Format</span>
+                  <strong>
+                    {selectedAdminDoc.type === "excel"
+                      ? "Excel"
+                      : selectedAdminDoc.type === "email"
+                        ? "Email"
+                        : "PDF"}
+                  </strong>
+                </div>
+                <div className="admin-doc-modal__card">
+                  <span>Uploaded by</span>
+                  <strong>{selectedAdminDoc.uploadedBy}</strong>
+                </div>
+                <div className="admin-doc-modal__card">
+                  <span>Upload date</span>
+                  <strong>{selectedAdminDoc.uploadDate}</strong>
+                </div>
+                <div className="admin-doc-modal__card admin-doc-modal__card--wide">
+                  <span>Total queries answered</span>
+                  <strong>{selectedAdminDoc.totalQueries ?? 0}</strong>
+                </div>
+              </div>
+
+              <div className="admin-doc-modal__summary">
+                {selectedAdminDoc.description || "No short description available yet."}
+              </div>
+
+              <div className="admin-doc-modal__actions">
+                <button
+                  className="admin-doc-modal__primary"
+                  type="button"
+                  onClick={() => handleAdminOpenViewer(selectedAdminDoc)}
+                >
+                  Open in Viewer
+                </button>
+                <button
+                  className="admin-doc-modal__secondary"
+                  type="button"
+                  onClick={handleAdminModalClose}
+                >
+                  Close
+                </button>
+              </div>
+            </section>
+          </div>
+        ) : null}
       </section>
     );
   }
