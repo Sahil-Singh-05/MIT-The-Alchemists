@@ -636,7 +636,7 @@ function App() {
     setError("");
   }
 
-  function handleAdminFilesAdded(fileList) {
+  async function handleAdminFilesAdded(fileList) {
     if (isAdminUploading) {
       return;
     }
@@ -663,50 +663,65 @@ function App() {
     );
     setIsAdminUploading(true);
     setAdminUploadProgress(0);
+    const uploadedOn = new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date());
+    const uploadedDocs = [];
+    const failedUploads = [];
 
-    const process = window.setInterval(() => {
-      setAdminUploadProgress((previous) => {
-        const next = Math.min(previous + 20, 100);
+    try {
+      for (const [index, file] of acceptedFiles.entries()) {
+        const formData = new FormData();
+        const type = resolveAdminDocumentType(file.name);
 
-        if (next === 100) {
-          window.clearInterval(process);
+        formData.append("file", file);
 
-          const uploadedOn = new Intl.DateTimeFormat("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }).format(new Date());
-
-          const newDocs = acceptedFiles.map((file, index) => {
-            const type = resolveAdminDocumentType(file.name);
-
-            return {
-              id: `admin-upload-${Date.now()}-${index}`,
-              name: file.name,
-              type,
-              size: formatFileSize(file.size),
-              uploadedBy: "Admin",
-              uploadDate: uploadedOn,
-              category:
-                type === "pdf" ? "Policy / PDF" : type === "excel" ? "Data / Excel" : "Inbox / Email",
-              description: "Uploaded file preview opens in a new tab using the browser viewer.",
-              previewUrl: registerAdminObjectUrl(URL.createObjectURL(file)),
-            };
+        try {
+          const response = await apiRequest("/admin/upload", {
+            method: "POST",
+            body: formData,
           });
 
-          startTransition(() => {
-            setAdminDocuments((previousDocs) => [...newDocs, ...previousDocs]);
+          uploadedDocs.push({
+            id: `admin-upload-${Date.now()}-${index}`,
+            name: response.filename ?? file.name,
+            type,
+            size: formatFileSize(file.size),
+            uploadedBy: "Admin",
+            uploadDate: uploadedOn,
+            category:
+              type === "pdf" ? "Policy / PDF" : type === "excel" ? "Data / Excel" : "Inbox / Email",
+            description:
+              response.message ??
+              "Document uploaded and ingested into the knowledge base successfully.",
+            previewUrl: registerAdminObjectUrl(URL.createObjectURL(file)),
           });
-
-          window.setTimeout(() => {
-            setIsAdminUploading(false);
-            setAdminUploadProgress(0);
-          }, 220);
+        } catch (uploadError) {
+          failedUploads.push(`${file.name}: ${humanizeError(uploadError)}`);
+        } finally {
+          setAdminUploadProgress(Math.round(((index + 1) / acceptedFiles.length) * 100));
         }
+      }
 
-        return next;
-      });
-    }, 80);
+      if (uploadedDocs.length) {
+        startTransition(() => {
+          setAdminDocuments((previousDocs) => [...uploadedDocs, ...previousDocs]);
+        });
+      }
+
+      if (failedUploads.length) {
+        setError(failedUploads.join(" | "));
+      } else if (uploadedDocs.length) {
+        setError(`${uploadedDocs.length} file(s) uploaded and ingested into the knowledge base.`);
+      }
+    } finally {
+      window.setTimeout(() => {
+        setIsAdminUploading(false);
+        setAdminUploadProgress(0);
+      }, 220);
+    }
   }
 
   function handleAdminFileInputChange(event) {
