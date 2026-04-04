@@ -111,7 +111,7 @@ img {
 }
 
 .sidebar::after {
-  bottom: 74px;
+  display: none;
 }
 
 .sidebar__top,
@@ -244,17 +244,30 @@ img {
 .sidebar__section-header {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
   color: var(--white);
+  text-align: left;
+  cursor: pointer;
   transition:
     opacity 220ms ease 120ms,
     transform 360ms cubic-bezier(0.22, 1, 0.36, 1) 80ms;
 }
 
 .sidebar__section-header small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 1px;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.9);
+  transition: transform 240ms ease;
+}
+
+.sidebar__section.is-collapsed .sidebar__section-header small {
+  transform: rotate(-90deg);
 }
 
 .sidebar__recents {
@@ -263,12 +276,21 @@ img {
   gap: 10px;
   margin-top: 14px;
   max-height: 240px;
+  overflow: hidden;
   opacity: 1;
   transform: translateY(0);
   transition:
     opacity 220ms ease 120ms,
     transform 360ms cubic-bezier(0.22, 1, 0.36, 1) 80ms,
     max-height 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebar__section.is-collapsed .sidebar__recents {
+  margin-top: 0;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
 
 .sidebar__recent {
@@ -566,6 +588,22 @@ img {
   border-color: #ba74f0;
 }
 
+.composer--disabled {
+  opacity: 0.78;
+  border-color: rgba(186, 116, 240, 0.55);
+  box-shadow:
+    0 12px 24px rgba(144, 86, 204, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.composer--disabled:focus-within {
+  transform: none;
+  border-color: rgba(186, 116, 240, 0.55);
+  box-shadow:
+    0 12px 24px rgba(144, 86, 204, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
 .composer--compact {
   min-height: 72px;
 }
@@ -599,6 +637,15 @@ img {
 
 .composer__input::placeholder {
   color: rgba(34, 17, 38, 0.55);
+}
+
+.composer__input:disabled {
+  color: rgba(34, 17, 38, 0.58);
+  cursor: not-allowed;
+}
+
+.composer__input:disabled::placeholder {
+  color: rgba(34, 17, 38, 0.46);
 }
 
 .composer__submit {
@@ -826,10 +873,6 @@ img {
   align-content: stretch;
 }
 
-.panel-view--search-active {
-  grid-template-rows: auto minmax(0, 1fr) auto;
-}
-
 .panel-view__header {
   display: flex;
   flex-direction: column;
@@ -846,12 +889,6 @@ img {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.38);
   box-shadow: 0 16px 30px rgba(124, 68, 181, 0.12);
-}
-
-.search-shell--docked {
-  width: min(100%, 820px);
-  margin-top: 10px;
-  margin-bottom: 4px;
 }
 
 .search-shell img {

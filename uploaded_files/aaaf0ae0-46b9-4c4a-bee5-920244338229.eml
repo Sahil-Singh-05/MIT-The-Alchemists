@@ -1,0 +1,860 @@
+Delivered-To: work.sarvesh101@gmail.com
+Received: by 2002:a05:7413:893:b0:1bd:9e84:6f75 with SMTP id sx19csp190516rdb;
+        Fri, 3 Apr 2026 15:14:29 -0700 (PDT)
+X-Received: by 2002:a05:6a21:998e:b0:398:89b6:1b41 with SMTP id adf61e73a8af0-39f2f04f878mr4297876637.32.1775254469641;
+        Fri, 03 Apr 2026 15:14:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775254469; cv=none;
+        d=google.com; s=arc-20240605;
+        b=UsqML1CIBV4ft2pS1IFuo/B/pdvz+y4WxBYNsgLug7yPwZOE7IZVwMaBI8KEiLq+Z/
+         PkWkd9KDP+PEJIhNo4D6JwVpeFmXJnvA2VKSEh6P9HZ3B9wCKpH9/iV2c2akKn2rN6d5
+         zIZgPJJDG27jH9fdEcGgsSmjPhKQgXMPOHQzJiC0coOTgDpOC0pDW76v34qO33J/9gDD
+         wZ1kKri1GvpLC3QDWOQWtZKbX5rNE5GIF5CQqA8ieRiZ9GxUMtbnvMnPaj8r4xtoytpq
+         oV+Xja7nwMhInGgsFAuSYy8rW22/XVWqRZurcHG8nRbJpCEIZjQdWY38s+ZJOGGczm+7
+         XlJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;
+        h=require-recipient-valid-since:feedback-id:list-unsubscribe-post
+         :list-unsubscribe:to:mime-version:subject:message-id:from:date
+         :dkim-signature:dkim-signature;
+        bh=8SBb4Bw1o4bRqVYW3LwqxJy44ifPZmxmws5X3RGQSlo=;
+        fh=gkXv1CvfpyfAG9cf/jE1n5FxAxYaf6epRL/l1hcRlIs=;
+        b=a83268E7Pd1z6NHVjyW1hveFMTdzV9tfxR42f78fxRfZAuY/TxhOjie4B3yNsc6y0H
+         tkvSeMyujwh63WaycMiK0La/u7zkhbn2pGhb79Na5BCUb1EcEApNzwi33rN11ifJquOR
+         q9LdYNAtkweGSHDzeBxi7+pamUMo3UhFUCFgNXuYXc2HOMP2DEWH87jIsIhwGPRPkFWb
+         rt7sPzUGrQ076W31vV8RZzq/x8di7fd3SfB0/SVhdBD/Fzx/UqBmuDcZEo4n4g2xvWEK
+         TmOiV0G4ZDerS8kG+3SnJ4uj2GhHL9fFTWl9+eAlIOc2+kgPc/NXnV06zu2nWwjs3AbU
+         7WOQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@maile.linkedin.com header.s=d2048-202308-0e header.b=VlknI7Qw;
+       dkim=pass header.i=@linkedin.com header.s=d2048-202308-00 header.b=f6YbI77i;
+       spf=pass (google.com: domain of s-4vysm03z1ody7dwlorumod4fmn2r6p1iuvqt6o4ovwtiw239wqsmru5d@bounce.linkedin.com designates 2620:119:50c0:207::198 as permitted sender) smtp.mailfrom=s-4vysm03z1ody7dwlorumod4fmn2r6p1iuvqt6o4ovwtiw239wqsmru5d@bounce.linkedin.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=linkedin.com
+Return-Path: <s-4vysm03z1ody7dwlorumod4fmn2r6p1iuvqt6o4ovwtiw239wqsmru5d@bounce.linkedin.com>
+Received: from maile-gf.linkedin.com (maile-gf.linkedin.com. [2620:119:50c0:207::198])
+        by mx.google.com with ESMTPS id 41be03b00d2f7-c76c661fee6si12376725a12.364.2026.04.03.15.14.28
+        for <work.sarvesh101@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Apr 2026 15:14:29 -0700 (PDT)
+Received-SPF: pass (google.com: domain of s-4vysm03z1ody7dwlorumod4fmn2r6p1iuvqt6o4ovwtiw239wqsmru5d@bounce.linkedin.com designates 2620:119:50c0:207::198 as permitted sender) client-ip=2620:119:50c0:207::198;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@maile.linkedin.com header.s=d2048-202308-0e header.b=VlknI7Qw;
+       dkim=pass header.i=@linkedin.com header.s=d2048-202308-00 header.b=f6YbI77i;
+       spf=pass (google.com: domain of s-4vysm03z1ody7dwlorumod4fmn2r6p1iuvqt6o4ovwtiw239wqsmru5d@bounce.linkedin.com designates 2620:119:50c0:207::198 as permitted sender) smtp.mailfrom=s-4vysm03z1ody7dwlorumod4fmn2r6p1iuvqt6o4ovwtiw239wqsmru5d@bounce.linkedin.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=linkedin.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maile.linkedin.com;
+	s=d2048-202308-0e; t=1775243816;
+	bh=8SBb4Bw1o4bRqVYW3LwqxJy44ifPZmxmws5X3RGQSlo=;
+	h=Date:From:Subject:MIME-Version:Content-Type:To:X-LinkedIn-Class:
+	 X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=VlknI7QwMqQw5f46te/ZxWg406S1XVj2/ebFrD8Hom9pfdI+UTQoUQ/shEEYy73PB
+	 ABs/QNyGCj0kKHX/8XZIcqK8QSU83B862IrRC22qeY1ijn2DS88PuZ5IITKLb02gEi
+	 XMQal2vGJ0tFt7qWc07K3UQfPTWgEIaYa7SyyppG9lIr6sF7/5YhilDw+EQCPPGwgB
+	 2K699RCq1qPqcy7FTq6ziHP6tbjFLD2ALcLv6I8+dkfiSxt10I0g/QHGmQBMyRQp7h
+	 SVQOaYfSHIVaQ9ngDsTxbXEHGZ/7Di5I29RB+8pxlssjH94VecFUYnmHfUD+BtYXJi
+	 4yZJCtPKzjj4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linkedin.com;
+	s=d2048-202308-00; t=1775243816;
+	bh=8SBb4Bw1o4bRqVYW3LwqxJy44ifPZmxmws5X3RGQSlo=;
+	h=Date:From:Subject:MIME-Version:Content-Type:To:X-LinkedIn-Class:
+	 X-LinkedIn-Template:X-LinkedIn-fbl;
+	b=f6YbI77ieIhziX9bIYjpJWcBD2ULdKi+JcBrI38ofNqUG8cU/Jw/6ZeD2T50p/irL
+	 a35XEJHac5hCcDokScuewvMi34qhwss/CFZpqugLxkA69MO84vTUFn1FnFgbbx7MYe
+	 FgKVGlhCLiSrToe8PCO14bIDye7kjOjwtg8On1urpO6b3/GLENdBazQ93YTuR+88x/
+	 e+MDROUnX8oqp6gZOzFBIbs3RIpgPs3NjW5dKL76xy3xxM72922QwkdCaHYt2DCu6r
+	 nvSs+uZUXJ0viaEGkBOVoVecaepJ1DdjyrdYgJ71ErsgDAGXTT3UMWDQ+0XJ+gQUg6
+	 7RY2khY0u9wLg==
+Date: Fri, 3 Apr 2026 19:16:56 +0000 (UTC)
+From: GenAI Works via LinkedIn <newsletters-noreply@linkedin.com>
+Message-ID: <1763327587.9435341.1775243816170@lva1-app53760.prod.linkedin.com>
+Subject: AI solo founder hits $1.8 billion
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_9435339_1279095492.1775243816167"
+To: Sarvesh Deshmukh <work.sarvesh101@gmail.com>
+X-LinkedIn-Class: EMAIL-DEFAULT
+X-LinkedIn-Template: email_series_follow_newsletter_02
+X-LinkedIn-fbl: m2-aszvapdki3pf2qtd08gixd6njm6wcba2tog2181wn1576mjil0ajzq9rfi8uv7bjn0q12bexgntdh27kwz4ewafbplg56x6l2gv58w
+X-LinkedIn-Id: hw48ti-mnj9yy14-ai
+List-Unsubscribe: <https://www.linkedin.com/series-notifications/?action=unsubscribe&memberToken=ADoAAEB8CaYBLofOGrJtG49-5ikFkFrH64D3hyo&newsletterId=7075090904906149891&newsletterTitle=The Atlas&lipi=urn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&midToken=AQHo0D9x-rGlWA&midSig=1MpPAdqSz4tYc1&ek=email_series_follow_newsletter_02&e=hw48ti-mnj9yy14-ai&eid=hw48ti-mnj9yy14-ai&m=unsub&ts=unsub&li=0&t=plh>
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Feedback-ID: email_series_follow_newsletter_02:linkedin
+Require-Recipient-Valid-Since: work.sarvesh101@gmail.com; Sat, 14 Sep 2024 19:50:05 +0000
+
+------=_Part_9435339_1279095492.1775243816167
+Content-Type: text/plain;charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-ID: text-body
+
+The Atlas
+
+By GenAI Works
+
+
+By GenAI Works
+
+   =20
+   =20
+    Read this article on LinkedIn to join the conversation
+Read on LinkedIn
+https://www.linkedin.com/comm/pulse/ai-solo-founder-hits-18-billion-genai-w=
+orks-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_02=
+%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&midToken=3DAQHo0D9x-rGlWA&midSig=3D1MpPAdqS=
+z4tYc1&trk=3Deml-email_series_follow_newsletter_02-null-0-read_more_banner_=
+cta_&trkEmail=3Deml-email_series_follow_newsletter_02-null-0-read_more_bann=
+er_cta_-null-hw48ti~mnj9yy14~ai-null-null&eid=3Dhw48ti-mnj9yy14-ai
+ =20
+Happy Friday! Sam Altman said AI would make the one-person billion-dollar c=
+ompany possible. A guy in LA selling weight-loss drugs from his living room=
+ just proved him right. $20K startup cost. Two months to build. One employe=
+e: his brother. $1.8 billion in projected annual sales. Elsewhere, OpenAI b=
+ought a talk show, Google gave away its best models and Perplexity showed a=
+n AI doing your taxes. Here is everything you need to know today. Medvi: So=
+lo founder builds $1.8B company with AI and $20K OpenAI buys TBPN in its fi=
+rst media acquisition Google drops Gemma 4 under Apache 2.0 for the first t=
+ime Perplexity Computer files your taxes live on camera A Solo Founder Used=
+ AI To Build A $1.8 Billion Company Matthew Gallagher spent $20,000 and two=
+ months launching Medvi, a telehealth startup selling GLP-1 drugs online. H=
+is only full-time hire is his brother. The company is on pace for $1.8 bill=
+ion in annual sales. The stack: ChatGPT, Claude and Grok for code. Midjourn=
+ey and Runway for ads. ElevenLabs and custom agents for customer service. D=
+octors and prescriptions outsourced to CareValidate and OpenLoop. The numbe=
+rs: $401M revenue in year one. Contract engineers and account managers fill=
+ the gaps. The core operation was built by one person. The sign: Altman pre=
+dicted this in 2024. Gallagher delivered it. And the product has nothing to=
+ do with AI. It is a drug distribution business running on AI infrastructur=
+e. GLP-1 demand is extraordinary and the telehealth regulatory window may n=
+ot stay open forever. But the operational model is what matters. What used =
+to take 50 people, office space and millions in funding can now be assemble=
+d by one person moving fast enough. GenAI Works Academy is now live Practic=
+al courses on ChatGPT, Claude, Cursor, Perplexity, Deep Seek and more, taug=
+ht by instructors who actually use them in production. Whether you want to =
+build faster, automate your work or figure out which tools are worth your t=
+ime, there's a course for it. What's inside: Prompt engineering for profess=
+ionals Claude Code from zero to shipping AI-powered marketing, data science=
+ and business strategy Beginner to advanced tracks across every major platf=
+orm No filler. No theory-only lectures. Just the skills that are actually m=
+oving careers forward right now. Explore GenAI Academy =E2=86=92 OpenAI Jus=
+t Bought A Talk Show OpenAI acquired TBPN for a reported low hundreds of mi=
+llions. First media acquisition by any AI lab. The show: 70,000 viewers per=
+ episode. Daily live on YouTube and X. Required watching for Silicon Valley=
+ founders and executives. $30M revenue run rate. Launched 17 months ago. Th=
+e deal: TBPN's 11-person team reports to OpenAI's global affairs chief Chri=
+s Lehane. Ad business dropped. Editorial independence retained. The play: O=
+penAI has taken public hits all year. Rather than fighting it through press=
+ releases, they bought the room where the tech conversation actually happen=
+s. This is a reputation play. OpenAI has taken sustained criticism this yea=
+r and buying TBPN gives them a direct line to the founders and operators wh=
+o shape tech sentiment daily. Whether the show can maintain credibility und=
+er corporate ownership is the obvious question, but killing its authenticit=
+y would defeat the purpose. Google Open-Sources Its Most Capable Models Yet=
+ Google DeepMind dropped Gemma 4. Four open models. Apache 2.0 licence. Fir=
+st time the Gemma line has been fully open for commercial use. The range: 2=
+B, 4B, 26B MoE and 31B. All handle vision, code and multi-step agent tasks.=
+ Smallest variants add voice and run offline on a phone. The shift: Previou=
+s Gemma releases used a restrictive custom licence that pushed enterprise d=
+evelopers towards Qwen and Mistral. Apache 2.0 removes that friction entire=
+ly. The context: Chinese labs have dominated open-source AI for the past ye=
+ar. This week, two US releases pushed back: Arcee AI Trinity-Large and Gemm=
+a 4. Google is going more open while its Chinese rivals go closed. The timi=
+ng matters. Open-source AI has been a Chinese-dominated story for the past =
+year, with Qwen and DeepSeek setting the pace. Two major US releases in one=
+ week signals that dynamic is shifting. Google choosing to go more permissi=
+ve while its rivals tighten up could reshape where enterprise developers pl=
+ace their bets. Perplexity Computer Will Do Your Taxes April 15 is approach=
+ing. Perplexity dropped a demo of its Computer agent preparing a federal ta=
+x return. 1.9 million views. How it works: Upload documents, answer questio=
+ns, watch the agent fill out IRS forms. Perplexity claims it retrieves and =
+applies the current tax code live. Why it matters: This is not a chatbot gi=
+ving tax tips. It is a browser agent navigating forms and entering data. Th=
+e most tangible demo of computer-use AI aimed at normal people so far. The =
+caveat: Double-check everything. Preparation assistance, not a replacement =
+for professional review. Computer-use agents have been a talking point for =
+months. Most demos have felt like developer previews. Showing an AI handlin=
+g the single most universally dreaded admin task of the year is a smarter s=
+ell than any benchmark chart. Tool of the Day: StoryMotion Turn static diag=
+rams into hand-drawn animated videos. Sketch on a canvas, control when each=
+ element appears, export as video. No motion design skills needed. Open sto=
+rymotion.video Sketch or pick a template Add effects and adjust timing Expo=
+rt and drop into your deck, course or post Try it yourself: storymotion.vid=
+eo Light Bytes Artemis II launches: Crew of four headed for the Moon. If su=
+ccessful, they will travel further than any humans in history. Sanctuary AI=
+ robotic hand: Hydraulic hand manipulates a cube ten consecutive times at t=
+he fingertips with no palm support. Zero-shot transfer from simulation. Byt=
+eDance Seedance 2.0: AI video generator now broadly available. Top of Artif=
+icial Analysis' video leaderboards. Alibaba Qwen3.6-Plus: Reasoning model r=
+ivalling Opus 4.5 on coding benchmarks. 1M-token context. Multimodal. Micro=
+soft MAI-Transcribe-1: Speech-to-text topping accuracy across 25 languages.=
+ Public preview. Cursor 3: Full rebuild. Multi-workspace. Parallel agents a=
+cross repos. Microsoft lost OpenAI: How one of the most preventable corpora=
+te mishaps of the decade cost Microsoft its largest customer and US governm=
+ent trust.
+Keep reading on LinkedIn
+https://www.linkedin.com/comm/pulse/ai-solo-founder-hits-18-billion-genai-w=
+orks-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_02=
+%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&midToken=3DAQHo0D9x-rGlWA&midSig=3D1MpPAdqS=
+z4tYc1&trk=3Deml-email_series_follow_newsletter_02-newsletter_content_previ=
+ew_text-0-readmore_button_&trkEmail=3Deml-email_series_follow_newsletter_02=
+-newsletter_content_preview_text-0-readmore_button_-null-hw48ti~mnj9yy14~ai=
+-null-null&eid=3Dhw48ti-mnj9yy14-ai
+ =20
+     =20
+
+----------------------------------------
+
+This email was intended for Sarvesh Deshmukh (Building AI systems that surv=
+ive real-world constraints | Applied ML & Generative AI | Protocol Presiden=
+t | SIH=E2=80=9924 Finalist)
+Learn why we included this: https://www.linkedin.com/help/linkedin/answer/4=
+788?lang=3Den&lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsletter=
+_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&midToken=3DAQHo0D9x-rGlWA&midSig=3D1MpPA=
+dqSz4tYc1&trk=3Deml-email_series_follow_newsletter_02-SecurityHelp-0-textfo=
+oterglimmer&trkEmail=3Deml-email_series_follow_newsletter_02-SecurityHelp-0=
+-textfooterglimmer-null-hw48ti~mnj9yy14~ai-null-null&eid=3Dhw48ti-mnj9yy14-=
+ai
+You are receiving LinkedIn notification emails. Others can see that you are=
+ a subscriber.
+
+
+Unsubscribe: https://www.linkedin.com/series-notifications/?action=3Dunsubs=
+cribe&memberToken=3DADoAAEB8CaYBLofOGrJtG49-5ikFkFrH64D3hyo&newsletterId=3D=
+7075090904906149891&newsletterTitle=3DThe Atlas&lipi=3Durn%3Ali%3Apage%3Aem=
+ail_email_series_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&midTok=
+en=3DAQHo0D9x-rGlWA&midSig=3D1MpPAdqSz4tYc1&ek=3Demail_series_follow_newsle=
+tter_02&e=3Dhw48ti-mnj9yy14-ai&eid=3Dhw48ti-mnj9yy14-ai&m=3Dunsubscribe&ts=
+=3DfooterGlimmer&li=3D0&t=3Dplh  =C2=A0=C2=A0=C2=B7=C2=A0=C2=A0Help: https:=
+//www.linkedin.com/help/linkedin/answer/67?lang=3Den&lipi=3Durn%3Ali%3Apage=
+%3Aemail_email_series_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&m=
+idToken=3DAQHo0D9x-rGlWA&midSig=3D1MpPAdqSz4tYc1&trk=3Deml-email_series_fol=
+low_newsletter_02-help-0-textfooterglimmer&trkEmail=3Deml-email_series_foll=
+ow_newsletter_02-help-0-textfooterglimmer-null-hw48ti~mnj9yy14~ai-null-null=
+&eid=3Dhw48ti-mnj9yy14-ai
+
+=C2=A9 2026 LinkedIn Corporation, 1zwnj000 West Maude Avenue, Sunnyvale, CA=
+ 94085.
+LinkedIn and the LinkedIn logo are registered trademarks of LinkedIn.
+------=_Part_9435339_1279095492.1775243816167
+Content-Type: text/html;charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Content-ID: html-body
+
+<html xmlns=3D"http://www.w3.org/1999/xhtml" lang=3D"en" xml:lang=3D"en"> <=
+head> <meta http-equiv=3D"Content-Type" content=3D"text/html;charset=3Dutf-=
+8"> <meta name=3D"HandheldFriendly" content=3D"true"> <meta name=3D"viewpor=
+t" content=3D"width=3Ddevice-width; initial-scale=3D0.666667; user-scalable=
+=3D0"> <meta name=3D"viewport" content=3D"width=3Ddevice-width"> <title></t=
+itle> <style>
+              @media (max-width: 512px) { .mercado-container { width: 100% =
+!important; } }
+            </style> <style>
+            @media (max-width: 480px) { .inline-button, .inline-button tabl=
+e { display: none !important; }
+            .full-width-button, .full-width-button table { display: table !=
+important; } } @media (max-width: 320px) {
+            .games-notification-badge { display: none !important; } }
+          </style> <style>body {font-family: -apple-system, system-ui, Blin=
+kMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+            'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid S=
+ans', 'Apple Color Emoji', 'Segoe UI Emoji',
+            'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida Grande', Helvetica=
+, Arial, sans-serif;}</style> <!--[if mso]><style type=3D"text/css"> </styl=
+e><![endif]--> <!--[if IE]><style type=3D"text/css"> </style><![endif]--> <=
+/head> <body dir=3D"ltr" class=3D"font-sans bg-color-background-canvas w-fu=
+ll m-0 p-0 pt-1" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adj=
+ust: 100%; margin: 0px; width: 100%; background-color: #f3f2f0; padding: 0p=
+x; padding-top: 8px; font-family: -apple-system, system-ui, BlinkMacSystemF=
+ont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Ox=
+ygen Sans', Cantarell, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji',=
+ 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sa=
+ns-serif;"> <div class=3D"h-0 opacity-0 text-transparent invisible overflow=
+-hidden w-0 max-h-[0]" style=3D"visibility: hidden; height: 0px; max-height=
+: 0; width: 0px; overflow: hidden; opacity: 0; mso-hide: all;" data-email-p=
+reheader=3D"true">The Atlas</div> <div class=3D"h-0 opacity-0 text-transpar=
+ent invisible overflow-hidden w-0 max-h-[0]" style=3D"visibility: hidden; h=
+eight: 0px; max-height: 0; width: 0px; overflow: hidden; opacity: 0; mso-hi=
+de: all;"> =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=
+=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=
+=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=
+=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=
+=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=
+=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=
+=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=
+=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=
+=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=
+=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =
+=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=
+=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=
+=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=
+=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=
+=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=
+=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=
+=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=
+=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=
+=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=
+=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=
+=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=
+=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=
+=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=
+=C2=A0 =CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=
+=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0 =CD=8F=C2=A0=CD=8F=
+=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=A0=CD=8F=C2=
+=A0=CD=8F=C2=A0=CD=8F=C2=A0 </div> <table role=3D"presentation" valign=3D"t=
+op" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"512" align=3D=
+"center" class=3D"mercado-container w-[512px] max-w-[512px] mx-auto my-0 p-=
+0 " style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; ms=
+o-table-lspace: 0pt; mso-table-rspace: 0pt; margin-left: auto; margin-right=
+: auto; margin-top: 0px; margin-bottom: 0px; width: 512px; max-width: 512px=
+; padding: 0px;"> <tbody> <tr> <td style=3D"-webkit-text-size-adjust: 100%;=
+ -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"=
+> <table role=3D"presentation" valign=3D"top" border=3D"0" cellspacing=3D"0=
+" cellpadding=3D"0" width=3D"100%" class=3D"bg-color-background-container "=
+ style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-t=
+able-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;"> <tbod=
+y> <tr> <td class=3D"text-center p-3" style=3D"-webkit-text-size-adjust: 10=
+0%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0p=
+t; padding: 24px; text-align: center;"> <table role=3D"presentation" valign=
+=3D"top" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"100%" cl=
+ass=3D"min-w-full" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-a=
+djust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; min-width: 100%;=
+"> <tbody> <tr> <td align=3D"left" valign=3D"middle" style=3D"-webkit-text-=
+size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-t=
+able-rspace: 0pt;"> <a href=3D"https://www.linkedin.com/comm/feed/?lipi=3Du=
+rn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_02%3BIPIiWxMoRjCXrsai=
+yY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;=
+trk=3Deml-email_series_follow_newsletter_02-header-0-home_glimmer_static_ba=
+dging_with_count&amp;trkEmail=3Deml-email_series_follow_newsletter_02-heade=
+r-0-home_glimmer_static_badging_with_count-null-hw48ti~mnj9yy14~ai-null-nul=
+l&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" class=3D"w-[84px]" style=
+=3D"color: #0a66c2; cursor: pointer; display: inline-block; text-decoration=
+: none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; width: =
+84px;"> <img class=3D"h-[37px] w-[101px]" alt=3D"LinkedIn" src=3D"https://s=
+tatic.licdn.com/aero-v1/sc/h/2fp5x7ci191mxbdy1eynscn59" data-test-header-st=
+atic-badging-img style=3D"outline: none; text-decoration: none; -ms-interpo=
+lation-mode: bicubic; height: 37px; width: 101px;" width=3D"101" height=3D"=
+37"> </a> </td> <td valign=3D"middle" align=3D"right" style=3D"-webkit-text=
+-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-=
+table-rspace: 0pt;"> <table role=3D"presentation" valign=3D"top" border=3D"=
+0" cellspacing=3D"0" cellpadding=3D"0" width=3D"auto" data-test-header-noti=
+fication-badges style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adju=
+st: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <tbody> <tr> <td =
+align=3D"right" valign=3D"middle" class=3D"px-0.5" style=3D"-webkit-text-si=
+ze-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-tab=
+le-rspace: 0pt; padding-left: 4px; padding-right: 4px;"> <a href=3D"https:/=
+/www.linkedin.com/comm/messaging/?lipi=3Durn%3Ali%3Apage%3Aemail_email_seri=
+es_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0=
+D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_new=
+sletter_02-header-0-messaging_glimmer&amp;trkEmail=3Deml-email_series_follo=
+w_newsletter_02-header-0-messaging_glimmer-null-hw48ti~mnj9yy14~ai-null-nul=
+l&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" class=3D"h-[25px]" style=
+=3D"color: #0a66c2; cursor: pointer; display: inline-block; text-decoration=
+: none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; height:=
+ 25px;"> <img alt=3D"Messaging icon" src=3D"https://static.licdn.com/aero-v=
+1/sc/h/4zo4b28tqisx2lerkp2qoioke" class=3D"h-[25px]" style=3D"outline: none=
+; text-decoration: none; -ms-interpolation-mode: bicubic; height: 25px;" he=
+ight=3D"25"> </a> </td> <td align=3D"right" valign=3D"middle" class=3D"px-0=
+.5" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; ms=
+o-table-lspace: 0pt; mso-table-rspace: 0pt; padding-left: 4px; padding-righ=
+t: 4px;"> <a href=3D"https://www.linkedin.com/comm/mynetwork/?lipi=3Durn%3A=
+li%3Apage%3Aemail_email_series_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJ=
+A%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=
+=3Deml-email_series_follow_newsletter_02-header-0-my_network_glimmer&amp;tr=
+kEmail=3Deml-email_series_follow_newsletter_02-header-0-my_network_glimmer-=
+null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_=
+blank" class=3D"h-[25px]" style=3D"color: #0a66c2; cursor: pointer; display=
+: inline-block; text-decoration: none; -webkit-text-size-adjust: 100%; -ms-=
+text-size-adjust: 100%; height: 25px;"> <img alt=3D"Mynetwork icon" src=3D"=
+https://static.licdn.com/aero-v1/sc/h/anu0f2h3c0xay9ou5nkdrjk8q" class=3D"h=
+-[25px]" style=3D"outline: none; text-decoration: none; -ms-interpolation-m=
+ode: bicubic; height: 25px;" height=3D"25"> </a> </td> <td align=3D"right" =
+valign=3D"middle" class=3D"px-0.5" style=3D"-webkit-text-size-adjust: 100%;=
+ -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; =
+padding-left: 4px; padding-right: 4px;"> <a href=3D"https://www.linkedin.co=
+m/comm/notifications/?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_ne=
+wsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&am=
+p;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-h=
+eader-0-notifications_glimmer&amp;trkEmail=3Deml-email_series_follow_newsle=
+tter_02-header-0-notifications_glimmer-null-hw48ti~mnj9yy14~ai-null-null&am=
+p;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" class=3D"h-[25px]" style=3D"c=
+olor: #0a66c2; cursor: pointer; display: inline-block; text-decoration: non=
+e; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; height: 25px=
+;"> <img alt=3D"Notifications icon" src=3D"https://static.licdn.com/aero-v1=
+/sc/h/eh1e9j5bszh6p379hn269p3ps" class=3D"h-[25px]" style=3D"outline: none;=
+ text-decoration: none; -ms-interpolation-mode: bicubic; height: 25px;" hei=
+ght=3D"25"> </a> </td> </tr> </tbody> </table> </td> </tr> </tbody> </table=
+> </td> </tr> <tr> <td class=3D"px-0 pb-3" style=3D"-webkit-text-size-adjus=
+t: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspac=
+e: 0pt; padding-left: 0px; padding-right: 0px; padding-bottom: 24px;"> <div=
+> <table role=3D"presentation" valign=3D"top" border=3D"0" cellspacing=3D"0=
+" cellpadding=3D"0" width=3D"100%" style=3D"-webkit-text-size-adjust: 100%;=
+ -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"=
+> <tbody> <tr> <td data-test-id=3D"newsletter-entity-lockup" class=3D"px-3 =
+pt-1" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; =
+mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding-left: 24px; padding-r=
+ight: 24px; padding-top: 8px;"> <table role=3D"presentation" valign=3D"top"=
+ border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"100%" class=3D"f=
+ont-sans" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 10=
+0%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-family: -apple-syste=
+m, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fi=
+ra Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantarell, 'Droid Sans', 'Apple Co=
+lor Emoji', 'Segoe UI Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida =
+Grande', Helvetica, Arial, sans-serif;"> <tbody> <tr> <td valign=3D"top" cl=
+ass=3D"pr-1 w-6" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adj=
+ust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 48px; paddi=
+ng-right: 8px;" width=3D"48"> <a href=3D"https://www.linkedin.com/comm/news=
+letters/7075090904906149891?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_fol=
+low_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rG=
+lWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newslette=
+r_02-newsletter_entity_lockup-0-newsletter_entity_cta&amp;trkEmail=3Deml-em=
+ail_series_follow_newsletter_02-newsletter_entity_lockup-0-newsletter_entit=
+y_cta-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" targe=
+t=3D"_blank" style=3D"color: #0a66c2; cursor: pointer; display: inline-bloc=
+k; text-decoration: none; -webkit-text-size-adjust: 100%; -ms-text-size-adj=
+ust: 100%;"> <img class=3D"inline-block relative bg-color-entity-ghost-back=
+ground w-6 h-6 rounded-md" src=3D"https://media.licdn.com/dms/image/v2/D4E1=
+2AQG9LYI2hcbeOQ/series-logo_image-shrink_100_100/B4EZh_rktRHgAY-/0/17544887=
+86191?e=3D1776902400&amp;v=3Dbeta&amp;t=3DjqgrX1KAC5ppSCmtvia0EGjcrdHid8OIA=
+W_s9QBcEX8" alt=3D"Open The Atlas" style=3D"outline: none; text-decoration:=
+ none; -ms-interpolation-mode: bicubic; position: relative; display: inline=
+-block; height: 48px; width: 48px; border-radius: 8px; background-color: #e=
+ae6df;" width=3D"48" height=3D"48"> </a> </td> <td valign=3D"top" style=3D"=
+-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspac=
+e: 0pt; mso-table-rspace: 0pt;"> <table role=3D"presentation" valign=3D"top=
+" border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"100%" style=3D"=
+-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspac=
+e: 0pt; mso-table-rspace: 0pt;"> <tbody> <tr> <td style=3D"-webkit-text-siz=
+e-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-tabl=
+e-rspace: 0pt;"> <a href=3D"https://www.linkedin.com/comm/newsletters/70750=
+90904906149891?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newslette=
+r_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSi=
+g=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-newslett=
+er_entity_lockup-0-newsletter_entity_cta&amp;trkEmail=3Deml-email_series_fo=
+llow_newsletter_02-newsletter_entity_lockup-0-newsletter_entity_cta-null-hw=
+48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" =
+class=3D"no-underline" style=3D"color: #0a66c2; cursor: pointer; display: i=
+nline-block; text-decoration: none; -webkit-text-size-adjust: 100%; -ms-tex=
+t-size-adjust: 100%; text-decoration-line: none;"> <div class=3D"pb-0.5" st=
+yle=3D"padding-bottom: 4px;"> <span class=3D"text-md font-bold text-color-t=
+ext break-words leading-regular" style=3D"overflow-wrap: break-word; font-s=
+ize: 16px; font-weight: 600; line-height: 1.25; color: rgba(0, 0, 0, 0.9);"=
+> The Atlas </span> </div> </a> </td> </tr> <tr> <td style=3D"-webkit-text-=
+size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-t=
+able-rspace: 0pt;"> <a href=3D"https://www.linkedin.com/comm/newsletters/70=
+75090904906149891?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsle=
+tter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;mi=
+dSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-newsl=
+etter_entity_lockup-0-newsletter_entity_cta&amp;trkEmail=3Deml-email_series=
+_follow_newsletter_02-newsletter_entity_lockup-0-newsletter_entity_cta-null=
+-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blan=
+k" class=3D"no-underline" style=3D"color: #0a66c2; cursor: pointer; display=
+: inline-block; text-decoration: none; -webkit-text-size-adjust: 100%; -ms-=
+text-size-adjust: 100%; text-decoration-line: none;"> <span class=3D"text-x=
+s text-color-text-low-emphasis leading-regular" style=3D"font-size: 12px; l=
+ine-height: 1.25; color: rgba(0, 0, 0, 0.6);"> Trusted by 3M+ readers for A=
+I updates. Subscribe now. </span> </a> </td> </tr> </tbody> </table> </td> =
+</tr> </tbody> </table> </td> </tr> <tr data-test-id=3D"newsletter-content-=
+preview"> <td class=3D"px-3 pt-2" style=3D"-webkit-text-size-adjust: 100%; =
+-ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; p=
+adding-left: 24px; padding-right: 24px; padding-top: 16px;"> <table role=3D=
+"presentation" valign=3D"top" border=3D"0" cellspacing=3D"0" cellpadding=3D=
+"0" width=3D"100%" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-a=
+djust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <tbody> <tr> <=
+td class=3D"overflow-hidden " style=3D"-webkit-text-size-adjust: 100%; -ms-=
+text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; overf=
+low: hidden;"> <table role=3D"presentation" valign=3D"top" border=3D"0" cel=
+lspacing=3D"0" cellpadding=3D"0" width=3D"100%" style=3D"-webkit-text-size-=
+adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-=
+rspace: 0pt;"> <tbody> <tr> <td style=3D"-webkit-text-size-adjust: 100%; -m=
+s-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <=
+a href=3D"https://www.linkedin.com/comm/pulse/ai-solo-founder-hits-18-billi=
+on-genai-works-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_new=
+sletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp=
+;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-ne=
+wsletter_content_preview-0-headline_&amp;trkEmail=3Deml-email_series_follow=
+_newsletter_02-newsletter_content_preview-0-headline_-null-hw48ti~mnj9yy14~=
+ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" class=3D"w-ful=
+l" style=3D"color: #0a66c2; cursor: pointer; display: inline-block; text-de=
+coration: none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;=
+ width: 100%;"> <img class=3D"block w-full aspect-[744/400] object-cover ov=
+erflow-hidden" data-test-id=3D"newsletter-content-preview__cover-image" alt=
+=3D"Newsletter cover image" src=3D"https://media.licdn.com/dms/image/v2/D4D=
+12AQFZ-OGBLU9UuA/article-cover_image-shrink_720_1280/B4DZ1Tw_YDHgAM-/0/1775=
+226846598?e=3D1776902400&amp;v=3Dbeta&amp;t=3DuiiYkyuEKuy5x-pFiBsGNI6NSsOQj=
+bVVbtRVfARujVc" style=3D"outline: none; text-decoration: none; -ms-interpol=
+ation-mode: bicubic; display: block; aspect-ratio: 744/400; width: 100%; ov=
+erflow: hidden; object-fit: cover;"> </a> </td> </tr> <tr> <td class=3D"py-=
+2" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso=
+-table-lspace: 0pt; mso-table-rspace: 0pt; padding-top: 16px; padding-botto=
+m: 16px;"> <table role=3D"presentation" valign=3D"top" border=3D"0" cellspa=
+cing=3D"0" cellpadding=3D"0" width=3D"100%" style=3D"-webkit-text-size-adju=
+st: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspa=
+ce: 0pt;"> <tbody> <tr> <td style=3D"-webkit-text-size-adjust: 100%; -ms-te=
+xt-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <a hr=
+ef=3D"https://www.linkedin.com/comm/pulse/ai-solo-founder-hits-18-billion-g=
+enai-works-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newslet=
+ter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;mid=
+Sig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-newsle=
+tter_content_preview-0-title_&amp;trkEmail=3Deml-email_series_follow_newsle=
+tter_02-newsletter_content_preview-0-title_-null-hw48ti~mnj9yy14~ai-null-nu=
+ll&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" class=3D"no-underline fo=
+nt-medium text-sm m-0 text-system-gray-90" style=3D"cursor: pointer; displa=
+y: inline-block; text-decoration: none; -webkit-text-size-adjust: 100%; -ms=
+-text-size-adjust: 100%; margin: 0px; font-size: 14px; font-weight: 500; co=
+lor: #282828; text-decoration-line: none;"> <h2 class=3D"m-0 text-display-s=
+m leading-regular text-color-text font-bold font-sans" style=3D"margin: 0px=
+; font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Ro=
+boto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantare=
+ll, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Emoji', =
+'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sans-serif; font-size=
+: 24px; font-weight: 600; line-height: 1.25; color: rgba(0, 0, 0, 0.9);"> A=
+I solo founder hits $1.8 billion </h2> </a> </td> </tr> <tr> <td style=3D"-=
+webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace=
+: 0pt; mso-table-rspace: 0pt;"> <table role=3D"presentation" valign=3D"top"=
+ border=3D"0" cellspacing=3D"0" cellpadding=3D"0" width=3D"100%" data-test-=
+id=3D"newsletter-author-lockup-redesign" class=3D"mt-1 mb-2" style=3D"-webk=
+it-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0p=
+t; mso-table-rspace: 0pt; margin-bottom: 16px; margin-top: 8px;"> <tbody> <=
+tr> <td valign=3D"middle" align=3D"left" class=3D"w-3" style=3D"-webkit-tex=
+t-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso=
+-table-rspace: 0pt; width: 24px;" width=3D"24"> <a href=3D"https://www.link=
+edin.com/comm/company/genai-works?lipi=3Durn%3Ali%3Apage%3Aemail_email_seri=
+es_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0=
+D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_new=
+sletter_02-newsletter_content_preview-0-author_&amp;trkEmail=3Deml-email_se=
+ries_follow_newsletter_02-newsletter_content_preview-0-author_-null-hw48ti~=
+mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" style=
+=3D"color: #0a66c2; cursor: pointer; display: inline-block; text-decoration=
+: none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;"> <img =
+class=3D"inline-block relative bg-color-entity-ghost-background w-4 h-4 ali=
+gn-middle" src=3D"https://media.licdn.com/dms/image/v2/D560BAQEwHWIvFeRbAQ/=
+company-logo_100_100/B56Zh_H8DaHMAQ-/0/1754479445250/genai_works_logo?e=3D1=
+776902400&amp;v=3Dbeta&amp;t=3DaprYPy8_3azSOSuhqgz-bkAj5V24Dsj1Zvd458o9X9k"=
+ alt=3D"Author image" style=3D"outline: none; text-decoration: none; -ms-in=
+terpolation-mode: bicubic; position: relative; display: inline-block; heigh=
+t: 32px; width: 32px; background-color: #eae6df; vertical-align: middle;" w=
+idth=3D"32" height=3D"32"> </a> </td> <td style=3D"-webkit-text-size-adjust=
+: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace=
+: 0pt;"> <a href=3D"https://www.linkedin.com/comm/company/genai-works?lipi=
+=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_02%3BIPIiWxMoRjCX=
+rsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&=
+amp;trk=3Deml-email_series_follow_newsletter_02-newsletter_content_preview-=
+0-author_&amp;trkEmail=3Deml-email_series_follow_newsletter_02-newsletter_c=
+ontent_preview-0-author_-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti=
+-mnj9yy14-ai" target=3D"_blank" class=3D"no-underline ml-1" style=3D"color:=
+ #0a66c2; cursor: pointer; display: inline-block; text-decoration: none; -w=
+ebkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; margin-left: 8px;=
+ text-decoration-line: none;"> <span class=3D"font-sans font-bold text-sm m=
+b-3 text-color-text-low-emphasis leading-regular" style=3D"margin-bottom: 2=
+4px; font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',=
+ Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cant=
+arell, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Emoji=
+', 'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sans-serif; font-s=
+ize: 14px; font-weight: 600; line-height: 1.25; color: rgba(0, 0, 0, 0.6);"=
+> GenAI Works </span> </a> </td> </tr> </tbody> </table> </td> </tr> <tr> <=
+td class=3D"pb-1" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-ad=
+just: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; padding-bottom: 8=
+px;"> <div class=3D"p-3 bg-color-surface-tint rounded-md font-sans" data-te=
+st-id=3D"newsletter-cta-banner" style=3D"border-radius: 8px; background-col=
+or: #f5f7f9; padding: 24px; font-family: -apple-system, system-ui, BlinkMac=
+SystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxyg=
+en, 'Oxygen Sans', Cantarell, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI =
+Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Lucida Grande', Helvetica, Ar=
+ial, sans-serif;"> <div class=3D"mb-1.5" style=3D"margin-bottom: 12px;"> <s=
+pan class=3D"text-md leading-regular font-bold text-color-text" style=3D"fo=
+nt-size: 16px; font-weight: 600; line-height: 1.25; color: rgba(0, 0, 0, 0.=
+9);"> Read this article on LinkedIn to join the conversation </span> </div>=
+ <table role=3D"presentation" valign=3D"top" border=3D"0" cellspacing=3D"0"=
+ cellpadding=3D"0" width=3D"100%" class=3D"email-button " data-test-id=3D"e=
+mail-button" style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust:=
+ 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <tbody> <tr> <td val=
+ign=3D"middle" align=3D"left" style=3D"-webkit-text-size-adjust: 100%; -ms-=
+text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <a =
+href=3D"https://www.linkedin.com/comm/pulse/ai-solo-founder-hits-18-billion=
+-genai-works-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsl=
+etter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;m=
+idSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-news=
+letter_content_preview-0-read_more_banner_cta_&amp;trkEmail=3Deml-email_ser=
+ies_follow_newsletter_02-newsletter_content_preview-0-read_more_banner_cta_=
+-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"=
+_blank" aria-label=3D"Open this article on LinkedIn" class=3D"align-top no-=
+underline " style=3D"color: #0a66c2; cursor: pointer; display: inline-block=
+; text-decoration: none; -webkit-text-size-adjust: 100%; -ms-text-size-adju=
+st: 100%; vertical-align: top; text-decoration-line: none;"> <table role=3D=
+"presentation" valign=3D"top" border=3D"0" cellspacing=3D"0" cellpadding=3D=
+"0" width=3D"auto" class=3D"border-separate " style=3D"-webkit-text-size-ad=
+just: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rs=
+pace: 0pt; border-collapse: separate;"> <tbody> <tr> <td class=3D"btn-sm bt=
+n-primary border-color-brand button-link leading-regular !min-h-[auto] !sha=
+dow-none border-1 border-solid" style=3D"-webkit-text-size-adjust: 100%; -m=
+s-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; hei=
+ght: min-content; border-radius: 24px; padding-top: 7px; padding-bottom: 7p=
+x; padding-left: 16px; padding-right: 16px; text-align: center; font-size: =
+14px; font-weight: 600; cursor: pointer; text-decoration-line: none; backgr=
+ound-color: #0a66c2; color: #ffffff; border-width: 1px; border-style: solid=
+; border-color: #0a66c2; line-height: 1.25; min-height: auto !important; bo=
+x-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000 !important;"> <a href=3D"https://=
+www.linkedin.com/comm/pulse/ai-solo-founder-hits-18-billion-genai-works-out=
+kf?lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_02%3BIPIiW=
+xMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSig=3D1MpPAdqS=
+z4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-newsletter_content_p=
+review-0-read_more_banner_cta_&amp;trkEmail=3Deml-email_series_follow_newsl=
+etter_02-newsletter_content_preview-0-read_more_banner_cta_-null-hw48ti~mnj=
+9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" tabindex=
+=3D"-1" aria-hidden=3D"true" class=3D"no-underline" style=3D"color: #0a66c2=
+; cursor: pointer; display: inline-block; text-decoration: none; -webkit-te=
+xt-size-adjust: 100%; -ms-text-size-adjust: 100%; text-decoration-line: non=
+e;"> <span class=3D"no-underline text-white" style=3D"color: #ffffff; text-=
+decoration-line: none;"> Read on LinkedIn </span> </a> </td> </tr> </tbody>=
+ </table> </a> </td> </tr> </tbody> </table> </div> </td> </tr> <tr data-te=
+st-id=3D"newsletter-content-preview--content"> <td class=3D"font-sans text-=
+md leading-open text-system-gray-90" style=3D"-webkit-text-size-adjust: 100=
+%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt=
+; font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Ro=
+boto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantare=
+ll, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Emoji', =
+'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sans-serif; font-size=
+: 16px; line-height: 1.5; color: #282828;"> <a href=3D"https://6hhfxazcbpc.=
+typeform.com/genai-salesform?utm_campaign=3D14755660-%5BLIVE%5D-CAMP-ALL-TO=
+BO-HUBSPOT-Media_Placement_Lead_Gen-2025_06&amp;utm_source=3Dgenerative_ai_=
+newsletter&amp;utm_medium=3Demail&amp;utm_content=3Dtop_banner&amp;trk=3D_p=
+ublishing-image-block" target=3D"_blank" data-tracking-control-name=3D"_pub=
+lishing-image-block" data-tracking-will-navigate class=3D"pt-2" data-test-i=
+d=3D"publishing-image-block" style=3D"color: #0a66c2; cursor: pointer; disp=
+lay: inline-block; text-decoration: none; -webkit-text-size-adjust: 100%; -=
+ms-text-size-adjust: 100%; padding-top: 16px;"> <figure class=3D"m-0" style=
+=3D"margin: 0px;"> <img class=3D"w-full block max-w-full" src=3D"https://me=
+dia.licdn.com/dms/image/v2/D4D12AQEqdMEL0441UQ/article-inline_image-shrink_=
+1500_2232/B4DZ1TcdzJGgAY-/0/1775221464673?e=3D1776902400&amp;v=3Dbeta&amp;t=
+=3D2pT9tsOpk5HBzZC7A2ACD2rzxcOUPa1x3LwZJ_mLs2o" style=3D"outline: none; tex=
+t-decoration: none; -ms-interpolation-mode: bicubic; display: block; width:=
+ 100%; max-width: 100%;"> </figure> </a> <hr data-test-id=3D"publishing-div=
+ider-block" class=3D"my-1 h-[1px] border-0 bg-system-gray-60" style=3D"marg=
+in-top: 8px; margin-bottom: 8px; height: 1px; border-width: 0; background-c=
+olor: #8c8c8c;"> <div data-test-id=3D"publishing-text-block"> <p class=3D"m=
+-0 mt-1.5 text-md leading-open" style=3D"font-weight: 400; margin: 0px; mar=
+gin-top: 12px; font-size: 16px; line-height: 1.5;"> <span class=3D"font-[70=
+0]" data-test-id=3D"little-text-block" style=3D"font-weight: 700;">Happy Fr=
+iday! </span><span class data-test-id=3D"little-text-block">Sam Altman said=
+ AI would make the one-person billion-dollar company possible. A guy in LA =
+selling weight-loss drugs from his living room just proved him right. $20K =
+startup cost. Two months to build. One employee: his brother. $1.8 billion =
+in projected annual sales. Elsewhere, OpenAI bought a talk show, Google gav=
+e away its best models and Perplexity showed an AI doing your taxes.</span>=
+ </p> </div> <div data-test-id=3D"publishing-text-block"> <p class=3D"m-0 m=
+t-1.5 text-md leading-open" style=3D"font-weight: 400; margin: 0px; margin-=
+top: 12px; font-size: 16px; line-height: 1.5;"> <span class data-test-id=3D=
+"little-text-block">Here is everything you need to know today.</span> </p> =
+</div> <div data-test-id=3D"publishing-text-block"> <p class=3D"m-0 mt-1.5 =
+text-md leading-open" style=3D"font-weight: 400; margin: 0px; margin-top: 1=
+2px; font-size: 16px; line-height: 1.5;"> <span class data-test-id=3D"littl=
+e-text-block"> <ul class=3D"block mt-2 mr-0 ml-3 p-0" data-test-id=3D"littl=
+e-template-list-unordered" style=3D"margin-left: 24px; margin-right: 0px; m=
+argin-top: 16px; display: block; padding: 0px;"> <li class=3D"mt-1.5 ml-2 t=
+ext-md leading-open text-system-gray-90" style=3D"margin-left: 16px; margin=
+-top: 12px; font-size: 16px; line-height: 1.5; color: #282828;"> <span clas=
+s=3D"font-[700]" data-test-id=3D"little-text-block" style=3D"font-weight: 7=
+00;">Medvi</span><span class data-test-id=3D"little-text-block">: Solo foun=
+der builds $1.8B company with AI and $20K</span> </li> <li class=3D"mt-1.5 =
+ml-2 text-md leading-open text-system-gray-90" style=3D"margin-left: 16px; =
+margin-top: 12px; font-size: 16px; line-height: 1.5; color: #282828;"> <spa=
+n class=3D"font-[700]" data-test-id=3D"little-text-block" style=3D"font-wei=
+ght: 700;">OpenAI</span><span class data-test-id=3D"little-text-block"> buy=
+s TBPN in its first media acquisition</span> </li> <li class=3D"mt-1.5 ml-2=
+ text-md leading-open text-system-gray-90" style=3D"margin-left: 16px; marg=
+in-top: 12px; font-size: 16px; line-height: 1.5; color: #282828;"> <span cl=
+ass=3D"font-[700]" data-test-id=3D"little-text-block" style=3D"font-weight:=
+ 700;">Google </span><span class data-test-id=3D"little-text-block">drops G=
+emma 4 under Apache 2.0 for the first time</span> </li> <li class=3D"mt-1.5=
+ ml-2 text-md leading-open text-system-gray-90" style=3D"margin-left: 16px;=
+ margin-top: 12px; font-size: 16px; line-height: 1.5; color: #282828;"> <sp=
+an class=3D"font-[700]" data-test-id=3D"little-text-block" style=3D"font-we=
+ight: 700;">Perplexity Computer</span><span class data-test-id=3D"little-te=
+xt-block"> files your taxes live on camera</span> </li> </ul> </span> </p> =
+</div> <hr data-test-id=3D"publishing-divider-block" class=3D"my-1 h-[1px] =
+border-0 bg-system-gray-60" style=3D"margin-top: 8px; margin-bottom: 8px; h=
+eight: 1px; border-width: 0; background-color: #8c8c8c;"> <div data-test-id=
+=3D"publishing-text-block"> <p class=3D"m-0 mt-1.5 text-md leading-open" st=
+yle=3D"font-weight: 400; margin: 0px; margin-top: 12px; font-size: 16px; li=
+ne-height: 1.5;"> <br> </p> </div> <div data-test-id=3D"publishing-text-blo=
+ck"> <h2 data-test-id=3D"publishing-text-block-h1" class=3D"font-bold m-0 t=
+ext-lg text-system-gray-90 py-1 leading-regular" style=3D"margin: 0px; padd=
+ing-top: 8px; padding-bottom: 8px; font-size: 20px; font-weight: 600; line-=
+height: 1.25; color: #282828;"> <span class data-test-id=3D"little-text-blo=
+ck">A Solo Founder Used AI To Build A $1.8 Billion Company</span> </h2> </d=
+iv> <div class=3D"pt-2" data-test-id=3D"publishing-image-block" style=3D"pa=
+dding-top: 16px;"> <figure class=3D"m-0" style=3D"margin: 0px;"> <img class=
+=3D"w-full block max-w-full" src=3D"https://media.licdn.com/dms/image/v2/D4=
+D12AQFMQ-YcXYmtOQ/article-inline_image-shrink_1500_2232/B4DZ1TxDtzIcAU-/0/1=
+775226864209?e=3D1776902400&amp;v=3Dbeta&amp;t=3DIxHXk_Ro25dU2ibmZiYJzYv-tp=
+s0ICcH2bV79RxSJlI" style=3D"outline: none; text-decoration: none; -ms-inter=
+polation-mode: bicubic; display: block; width: 100%; max-width: 100%;"> </f=
+igure> </div> <div data-test-id=3D"publishing-text-block"> <p class=3D"m-0 =
+mt-1.5 text-md leading-open" style=3D"font-weight: 400; margin: 0px; margin=
+-top: 12px; font-size: 16px; line-height: 1.5;"> <span class data-test-id=
+=3D"little-text-block">Matthew Gallagher spent $20,000 and two months launc=
+hing Medvi, a telehealth startup selling GLP-1 drugs online. His only full-=
+time hire is his brother. The company is on pace for $1.8 billion in annual=
+ sales.</span> </p> </div> <div data-test-id=3D"publishing-text-block"> <p =
+class=3D"m-0 mt-1.5 text-md leading-open" style=3D"font-weight: 400; margin=
+: 0px; margin-top: 12px; font-size: 16px; line-height: 1.5;"> <span class d=
+ata-test-id=3D"little-text-block"> <ul class=3D"block mt-2 mr-0 ml-3 p-0" d=
+ata-test-id=3D"little-template-list-unordered" style=3D"margin-left: 24px; =
+margin-right: 0px; margin-top: 16px; display: block; padding: 0px;"> <li cl=
+ass=3D"mt-1.5 ml-2 text-md leading-open text-system-gray-90" style=3D"margi=
+n-left: 16px; margin-top: 12px; font-size: 16px; line-height: 1.5; color: #=
+282828;"> <span class=3D"font-[700]" data-test-id=3D"little-text-block" sty=
+le=3D"font-weight: 700;">The stack:</span><span class data-test-id=3D"littl=
+e-text-block"> ChatGPT, Claude and Grok for code. Midjourney and Runway for=
+ ads. ElevenLabs and custom agents for customer service. Doctors and prescr=
+iptions outsourced to CareValidate and OpenLoop.</span> </li> <li class=3D"=
+mt-1.5 ml-2 text-md leading-open text-system-gray-90" style=3D"margin-left:=
+ 16px; margin-top: 12px; font-size: 16px; line-height: 1.5; color: #282828;=
+"> <span class=3D"font-[700]" data-test-id=3D"little-text-block" style=3D"f=
+ont-weight: 700;">The numbers:</span><span class data-test-id=3D"little-tex=
+t-block"> $401M revenue in year one. Contract engineers and account manager=
+s fill the gaps. The core operation was built by one person.</span> </li> <=
+li class=3D"mt-1.5 ml-2 text-md leading-open text-system-gray-90" style=3D"=
+margin-left: 16px; margin-top: 12px; font-size: 16px; line-height: 1.5; col=
+or: #282828;"> <span class=3D"font-[700]" data-test-id=3D"little-text-block=
+" style=3D"font-weight: 700;">The sign:</span><span class data-test-id=3D"l=
+ittle-text-block"> Altman predicted this in 2024. Gallagher delivered it. A=
+nd the product has nothing to do with AI. It is a drug distribution busines=
+s running on AI infrastructure.</span> </li> </ul> </span> </p> </div> <div=
+ data-test-id=3D"publishing-text-block"> <p class=3D"m-0 mt-1.5 text-md lea=
+ding-open" style=3D"font-weight: 400; margin: 0px; margin-top: 12px; font-s=
+ize: 16px; line-height: 1.5;"> <span class data-test-id=3D"little-text-bloc=
+k">GLP-1 demand is extraordinary and the telehealth regulatory window may n=
+ot stay open forever. But the operational model is what matters. What used =
+to take 50 people, office space and millions in funding can now be assemble=
+d by one person moving fast enough.</span> </p> </div> <span>...</span> </t=
+d> </tr> <tr> <td class=3D"pt-2 no-underline" style=3D"-webkit-text-size-ad=
+just: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rs=
+pace: 0pt; padding-top: 16px; text-decoration-line: none;"> <table role=3D"=
+presentation" valign=3D"top" border=3D"0" cellspacing=3D"0" cellpadding=3D"=
+0" width=3D"100%" class=3D"email-button series-content-preview__bottom-cta"=
+ data-test-id=3D"email-button" style=3D"-webkit-text-size-adjust: 100%; -ms=
+-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> <t=
+body> <tr> <td valign=3D"middle" align=3D"left" style=3D"-webkit-text-size-=
+adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-=
+rspace: 0pt;"> <a href=3D"https://www.linkedin.com/comm/pulse/ai-solo-found=
+er-hits-18-billion-genai-works-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_email_s=
+eries_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQ=
+Ho0D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_=
+newsletter_02-newsletter_content_preview-0-readmore_button_&amp;trkEmail=3D=
+eml-email_series_follow_newsletter_02-newsletter_content_preview-0-readmore=
+_button_-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" ta=
+rget=3D"_blank" aria-label=3D"Open The Atlas on LinkedIn" class=3D"align-to=
+p no-underline " style=3D"color: #0a66c2; cursor: pointer; display: inline-=
+block; text-decoration: none; -webkit-text-size-adjust: 100%; -ms-text-size=
+-adjust: 100%; vertical-align: top; text-decoration-line: none; width: 100%=
+;"> <table role=3D"presentation" valign=3D"top" border=3D"0" cellspacing=3D=
+"0" cellpadding=3D"0" width=3D"100%" class=3D"border-separate " style=3D"-w=
+ebkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace:=
+ 0pt; mso-table-rspace: 0pt; border-collapse: separate; width: 100%;"> <tbo=
+dy> <tr> <td class=3D"btn-md btn-secondary-emphasis border-color-brand butt=
+on-link leading-regular !min-h-[auto] !shadow-none border-1 border-solid fo=
+nt-sans" data-test-id=3D"newsletter-content-preview-redesign-bottom-cta" st=
+yle=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-tabl=
+e-lspace: 0pt; mso-table-rspace: 0pt; height: min-content; border-radius: 2=
+4px; padding-top: 12px; padding-bottom: 12px; padding-left: 24px; padding-r=
+ight: 24px; text-align: center; font-size: 16px; font-weight: 600; cursor: =
+pointer; text-decoration-line: none; background-color: rgba(0, 0, 0, 0); co=
+lor: #0a66c2; border-width: 1px; border-style: solid; border-color: #0a66c2=
+; font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Ro=
+boto, 'Helvetica Neue', 'Fira Sans', Ubuntu, Oxygen, 'Oxygen Sans', Cantare=
+ll, 'Droid Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Emoji', =
+'Segoe UI Symbol', 'Lucida Grande', Helvetica, Arial, sans-serif; line-heig=
+ht: 1.25; min-height: auto !important; box-shadow: 0 0 #0000, 0 0 #0000, 0 =
+0 #0000 !important;"> <a href=3D"https://www.linkedin.com/comm/pulse/ai-sol=
+o-founder-hits-18-billion-genai-works-outkf?lipi=3Durn%3Ali%3Apage%3Aemail_=
+email_series_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midTok=
+en=3DAQHo0D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_=
+follow_newsletter_02-newsletter_content_preview-0-readmore_button_&amp;trkE=
+mail=3Deml-email_series_follow_newsletter_02-newsletter_content_preview-0-r=
+eadmore_button_-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14=
+-ai" target=3D"_blank" tabindex=3D"-1" aria-hidden=3D"true" class=3D"no-und=
+erline" style=3D"color: #0a66c2; cursor: pointer; display: inline-block; te=
+xt-decoration: none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: =
+100%; text-decoration-line: none; width: 100%;"> <span class=3D"no-underlin=
+e text-color-brand" style=3D"color: #0a66c2; text-decoration-line: none;"> =
+Keep reading on LinkedIn </span> </a> </td> </tr> </tbody> </table> </a> </=
+td> </tr> </tbody> </table> </td> </tr> </tbody> </table> </td> </tr> </tbo=
+dy> </table> </td> </tr> </tbody> </table> </td> </tr> </tbody> </table> </=
+div> </td> </tr> <tr> <td class=3D"bg-color-background-canvas p-3" style=3D=
+"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspa=
+ce: 0pt; mso-table-rspace: 0pt; background-color: #f3f2f0; padding: 24px;">=
+ <table role=3D"presentation" valign=3D"top" border=3D"0" cellspacing=3D"0"=
+ cellpadding=3D"0" width=3D"100%" class=3D"text-xs" style=3D"-webkit-text-s=
+ize-adjust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-ta=
+ble-rspace: 0pt; font-size: 12px;"> <tbody> <tr> <td class=3D"pb-1 m-0" dat=
+a-test-id=3D"email-footer__intended" style=3D"-webkit-text-size-adjust: 100=
+%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt=
+; margin: 0px; padding-bottom: 8px;"> This email was intended for Sarvesh D=
+eshmukh (Building AI systems that survive real-world constraints | Applied =
+ML &amp; Generative AI | Protocol President | SIH=E2=80=9924 Finalist) </td=
+> </tr> <tr> <td class=3D"pb-1 m-0" style=3D"-webkit-text-size-adjust: 100%=
+; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;=
+ margin: 0px; padding-bottom: 8px;"> <a href=3D"https://www.linkedin.com/he=
+lp/linkedin/answer/4788?lang=3Den&amp;lipi=3Durn%3Ali%3Apage%3Aemail_email_=
+series_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DA=
+QHo0D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow=
+_newsletter_02-SecurityHelp-0-footerglimmer&amp;trkEmail=3Deml-email_series=
+_follow_newsletter_02-SecurityHelp-0-footerglimmer-null-hw48ti~mnj9yy14~ai-=
+null-null&amp;eid=3Dhw48ti-mnj9yy14-ai" target=3D"_blank" class=3D"text-inh=
+erit underline" style=3D"cursor: pointer; display: inline-block; text-decor=
+ation: none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; co=
+lor: inherit; text-decoration-line: underline;">Learn why we included this.=
+</a> </td> </tr> <tr> <td class=3D"pb-1 m-0" style=3D"-webkit-text-size-adj=
+ust: 100%; -ms-text-size-adjust: 100%; mso-table-lspace: 0pt; mso-table-rsp=
+ace: 0pt; margin: 0px; padding-bottom: 8px;">You are receiving LinkedIn not=
+ification emails. Others can see that you are a subscriber.</td> </tr> <tr>=
+ <td class=3D"pb-1 m-0" style=3D"-webkit-text-size-adjust: 100%; -ms-text-s=
+ize-adjust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt; margin: 0px=
+; padding-bottom: 8px;"> <a href=3D"https://www.linkedin.com/series-notific=
+ations/?action=3Dunsubscribe&amp;memberToken=3DADoAAEB8CaYBLofOGrJtG49-5ikF=
+kFrH64D3hyo&amp;newsletterId=3D7075090904906149891&amp;newsletterTitle=3DTh=
+e Atlas&amp;lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newsletter_0=
+2%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSig=
+=3D1MpPAdqSz4tYc1&amp;ek=3Demail_series_follow_newsletter_02&amp;e=3Dhw48ti=
+-mnj9yy14-ai&amp;eid=3Dhw48ti-mnj9yy14-ai&amp;m=3Dunsubscribe&amp;ts=3Dfoot=
+erGlimmer&amp;li=3D0&amp;t=3Dplh" target=3D"_blank" class=3D"text-inherit u=
+nderline" style=3D"cursor: pointer; display: inline-block; text-decoration:=
+ none; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: i=
+nherit; text-decoration-line: underline;">Unsubscribe</a> =C2=A0=C2=A0=C2=
+=B7=C2=A0=C2=A0 <a href=3D"https://www.linkedin.com/help/linkedin/answer/67=
+?lang=3Den&amp;lipi=3Durn%3Ali%3Apage%3Aemail_email_series_follow_newslette=
+r_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0D9x-rGlWA&amp;midSi=
+g=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_newsletter_02-help-0-f=
+ooterglimmer&amp;trkEmail=3Deml-email_series_follow_newsletter_02-help-0-fo=
+oterglimmer-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3Dhw48ti-mnj9yy14-ai"=
+ target=3D"_blank" data-test-help-link class=3D"text-inherit underline" sty=
+le=3D"cursor: pointer; display: inline-block; text-decoration: none; -webki=
+t-text-size-adjust: 100%; -ms-text-size-adjust: 100%; color: inherit; text-=
+decoration-line: underline;">Help</a> </td> </tr> <tr> <td class=3D"pb-1" s=
+tyle=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; mso-tab=
+le-lspace: 0pt; mso-table-rspace: 0pt; padding-bottom: 8px;"> <a href=3D"ht=
+tps://www.linkedin.com/comm/feed/?lipi=3Durn%3Ali%3Apage%3Aemail_email_seri=
+es_follow_newsletter_02%3BIPIiWxMoRjCXrsaiyY7KJA%3D%3D&amp;midToken=3DAQHo0=
+D9x-rGlWA&amp;midSig=3D1MpPAdqSz4tYc1&amp;trk=3Deml-email_series_follow_new=
+sletter_02-footer-0-logoGlimmer&amp;trkEmail=3Deml-email_series_follow_news=
+letter_02-footer-0-logoGlimmer-null-hw48ti~mnj9yy14~ai-null-null&amp;eid=3D=
+hw48ti-mnj9yy14-ai" target=3D"_blank" style=3D"color: #0a66c2; cursor: poin=
+ter; display: inline-block; text-decoration: none; -webkit-text-size-adjust=
+: 100%; -ms-text-size-adjust: 100%;"> <img src=3D"https://static.licdn.com/=
+aero-v1/sc/h/9ehe6n39fa07dc5edzv0rla4e" alt=3D"LinkedIn" class=3D"block h-[=
+14px] w-[56px] image-rendering-crisp" style=3D"outline: none; text-decorati=
+on: none; image-rendering: -moz-crisp-edges; image-rendering: -o-crisp-edge=
+s; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges=
+; -ms-interpolation-mode: nearest-neighbor; display: block; height: 14px; w=
+idth: 56px;" width=3D"56" height=3D"14"> </a> </td> </tr> <tr> <td data-tes=
+t-copyright-text style=3D"-webkit-text-size-adjust: 100%; -ms-text-size-adj=
+ust: 100%; mso-table-lspace: 0pt; mso-table-rspace: 0pt;"> =C2=A9 2026 Link=
+edIn Corporation, 1&zwnj;000 West Maude Avenue, Sunnyvale, CA 94085. <span =
+data-test-trademarks-text> LinkedIn and the LinkedIn logo are registered tr=
+ademarks of LinkedIn. </span> </td> </tr> </tbody> </table> </td> </tr> </t=
+body> </table> </td> </tr> </tbody> </table> <img alt role=3D"presentation"=
+ src=3D"https://www.linkedin.com/emimp/ip_YUhjME9IUnBMVzF1YWpsNWVURTBMV0ZwO=
+lpXMWhhV3hmYzJWeWFXVnpYMlp2Ykd4dmQxOXVaWGR6YkdWMGRHVnlYekF5OmRYSnVPbXhwT214=
+cGJtdGxaRWx1UVhKMGFXTnNaVG8zTkRRMU9ERTNNekV3TVRNNE9Ua3dOVGt5.gif" style=3D"=
+outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; widt=
+h: 1px; height: 1px;" width=3D"1" height=3D"1"> </body> </html>
+------=_Part_9435339_1279095492.1775243816167--
+

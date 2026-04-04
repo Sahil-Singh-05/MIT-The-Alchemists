@@ -17,7 +17,6 @@ const NAV_ITEMS = [
   { id: "chat", label: "New Chat", icon: ASSETS.message },
   { id: "search", label: "Search Chat", icon: ASSETS.search },
   { id: "tickets", label: "Tickets", icon: ASSETS.ticket, accent: true },
-  { id: "sessions", label: "Sessions", icon: ASSETS.profile },
 ];
 
 const ADMIN_NAV_ITEMS = [
@@ -356,6 +355,8 @@ function TypingBubble() {
 
 function WorkspaceApp({ currentUser, onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isRecentsOpen, setIsRecentsOpen] = useState(true);
+  const [isSearchHistorySession, setIsSearchHistorySession] = useState(false);
   const [activeView, setActiveView] = useState("chat");
   const [sessions, setSessions] = useState([]);
   const [tickets, setTickets] = useState([]);
@@ -639,11 +640,17 @@ function WorkspaceApp({ currentUser, onLogout }) {
     }
   }
 
-  async function openSession(sessionId) {
+  async function openSession(sessionId, options = {}) {
+    const { readOnly = false } = options;
+
     setError("");
     setActiveView("chat");
     setCurrentSessionId(sessionId);
+    setIsSearchHistorySession(readOnly);
     setIsLoadingSession(true);
+    if (readOnly) {
+      setDraft("");
+    }
 
     try {
       const history = await apiRequest(`/chat/session/${sessionId}`);
@@ -699,6 +706,7 @@ function WorkspaceApp({ currentUser, onLogout }) {
 
     setActiveView("chat");
     setCurrentSessionId(null);
+    setIsSearchHistorySession(false);
     setMessages([]);
     setDraft("");
   }
@@ -708,7 +716,7 @@ function WorkspaceApp({ currentUser, onLogout }) {
 
     const question = draft.trim();
 
-    if (!question || isSubmitting) {
+    if (!question || isSubmitting || isSearchHistorySession) {
       return;
     }
 
@@ -991,9 +999,13 @@ function WorkspaceApp({ currentUser, onLogout }) {
   }
 
   function renderComposer(isCompact = false) {
+    const isComposerDisabled = isSearchHistorySession && !isLanding;
+
     return (
       <form
-        className={`composer ${isCompact ? "composer--compact" : ""}`}
+        className={`composer ${isCompact ? "composer--compact" : ""} ${
+          isComposerDisabled ? "composer--disabled" : ""
+        }`}
         onSubmit={handleSubmit}
       >
         <img alt="" className="composer__icon composer__icon--left" src={ASSETS.search} />
@@ -1003,13 +1015,20 @@ function WorkspaceApp({ currentUser, onLogout }) {
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleComposerKeyDown}
-          placeholder={isLanding ? "" : "Ask the knowledge base anything..."}
+          placeholder={
+            isLanding
+              ? ""
+              : isComposerDisabled
+                ? "Search history chats are read-only."
+                : "Ask the knowledge base anything..."
+          }
           rows={1}
+          disabled={isComposerDisabled}
         />
         <button
           className="composer__submit"
           type="submit"
-          disabled={!draft.trim() || isSubmitting}
+          disabled={isComposerDisabled || !draft.trim() || isSubmitting}
           aria-label="Send message"
         >
           <img alt="" src={ASSETS.message} />
@@ -1018,9 +1037,9 @@ function WorkspaceApp({ currentUser, onLogout }) {
     );
   }
 
-  function renderSearchShell(isDocked = false) {
+  function renderSearchShell() {
     return (
-      <label className={`search-shell ${isDocked ? "search-shell--docked" : ""}`}>
+      <label className="search-shell">
         <img alt="" src={ASSETS.search} />
         <input
           type="text"
@@ -1123,42 +1142,38 @@ function WorkspaceApp({ currentUser, onLogout }) {
 
   function renderSearchView() {
     return (
-      <section
-        className={`panel-view panel-view--search ${
-          hasActivatedSearch ? "panel-view--search-active" : ""
-        }`}
-      >
+      <section className="panel-view panel-view--search">
         <header className="panel-view__header">
           <p>Search Chat</p>
           <span>Find prior RAG conversations and jump back in.</span>
         </header>
 
-        {!hasActivatedSearch ? renderSearchShell() : null}
+        {renderSearchShell()}
 
         <div className="panel-view__scroll">
-          <div className="panel-grid">
-            {visibleSessions.length ? (
-              visibleSessions.map((session) => (
-                <button
-                  className="panel-card"
-                  key={session.id}
-                  type="button"
-                  onClick={() => openSession(session.id)}
-                >
-                  <strong>{session.title}</strong>
-                  <span>{session.message_count} messages</span>
-                  <small>{formatTicketDate(session.created_at)}</small>
-                </button>
-              ))
-            ) : (
-              <div className="empty-card">
-                <p>No matching chats yet.</p>
-              </div>
-            )}
-          </div>
+          {hasActivatedSearch ? (
+            <div className="panel-grid">
+              {visibleSessions.length ? (
+                visibleSessions.map((session) => (
+                  <button
+                    className="panel-card"
+                    key={session.id}
+                    type="button"
+                    onClick={() => openSession(session.id, { readOnly: true })}
+                  >
+                    <strong>{session.title}</strong>
+                    <span>{session.message_count} messages</span>
+                    <small>{formatTicketDate(session.created_at)}</small>
+                  </button>
+                ))
+              ) : (
+                <div className="empty-card">
+                  <p>No matching chats yet.</p>
+                </div>
+              )}
+            </div>
+          ) : null}
         </div>
-
-        {hasActivatedSearch ? renderSearchShell(true) : null}
       </section>
     );
   }
@@ -1177,11 +1192,10 @@ function WorkspaceApp({ currentUser, onLogout }) {
               <article className="ticket-card" key={ticket.ticket_id}>
                 <div className="ticket-card__header">
                   <strong>{ticket.subject}</strong>
-                  <span>{ticket.status}</span>
                 </div>
                 <p>{ticket.client_name}</p>
                 <small>
-                  {ticket.ticket_id} | {ticket.priority} | {formatTicketDate(ticket.created_at)}
+                  {ticket.ticket_id} | {formatTicketDate(ticket.created_at)}
                 </small>
                 <div className="sources">
                   {[...new Set(ticket.sources_cited)].map((source) => (
@@ -1726,11 +1740,16 @@ function WorkspaceApp({ currentUser, onLogout }) {
             ))}
           </nav>
 
-          <div className="sidebar__section">
-            <div className="sidebar__section-header">
+          <div className={`sidebar__section ${isRecentsOpen ? "is-open" : "is-collapsed"}`}>
+            <button
+              aria-expanded={isRecentsOpen}
+              className={`sidebar__section-header ${isRecentsOpen ? "is-open" : ""}`}
+              type="button"
+              onClick={() => setIsRecentsOpen((current) => !current)}
+            >
               <span>Recents</span>
-              <small>v</small>
-            </div>
+              <small aria-hidden="true">v</small>
+            </button>
 
             <div className="sidebar__recents">
               {recentSessions.length ? (
@@ -1739,7 +1758,7 @@ function WorkspaceApp({ currentUser, onLogout }) {
                     className="sidebar__recent"
                     key={session.id}
                     type="button"
-                    onClick={() => openSession(session.id)}
+                    onClick={() => openSession(session.id, { readOnly: true })}
                   >
                     {truncateLabel(session.title, 22)}
                   </button>
