@@ -7,6 +7,7 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 5173,
     proxy: {
+      "/auth": "http://127.0.0.1:8000",
       "/chat": "http://127.0.0.1:8000",
       "/crm": "http://127.0.0.1:8000",
       "/admin": "http://127.0.0.1:8000",

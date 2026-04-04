@@ -1,114 +1,165 @@
 """
-routers/chat.py — Employee chat endpoints
-
-Handles all chat-related operations:
-- Create a new chat session
-- Send a message and get a RAG answer
-- List all chat sessions
-- Get history of a specific session
-- Delete a session
+Persistent employee chat endpoints.
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
-from models.chat import (
-    NewSessionRequest,
-    ChatRequest,
-    ChatResponse,
-    SessionInfo,
-    MessageItem,
-)
-from session_store import (
-    create_session,
-    get_session,
-    list_sessions,
-    add_message,
-    get_history,
-    delete_session,
-)
+from auth_utils import utcnow
+from database import get_db
+from db_models import ChatMessage, ChatSession, User
+from dependencies import get_current_user
+from models.chat import ChatRequest, ChatResponse, MessageItem, NewSessionRequest, SessionInfo
 from rag.query_engine import ask
 
 router = APIRouter(prefix="/chat", tags=["Chat"])
 
 
-@router.post("/session", response_model=SessionInfo)
-async def new_session(body: NewSessionRequest):
-    """Create a new chat session."""
-    session = create_session(title=body.title)
-    return SessionInfo(
-        id            = session["id"],
-        title         = session["title"],
-        created_at    = session["created_at"],
-        message_count = 0,
+def _session_query_for_user(db: Session, session_id: str, user: User):
+    query = db.query(ChatSession).filter(ChatSession.id == session_id)
+    if user.role != "admin":
+        query = query.filter(ChatSession.user_id == user.id)
+    return query
+
+
+def _message_item(message: ChatMessage) -> MessageItem:
+    return MessageItem(
+        role=message.role,
+        content=message.content,
+        timestamp=message.timestamp.isoformat(),
+        question=message.question,
+        sources=message.sources or [],
+        has_conflict=message.has_conflict,
+        conflict_note=message.conflict_note or "",
+        has_answer=message.has_answer,
+        no_answer_reason=message.no_answer_reason or "",
+        is_error=message.is_error,
     )
 
 
+@router.post("/session", response_model=SessionInfo)
+async def new_session(
+    body: NewSessionRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    session = ChatSession(user_id=current_user.id, title=(body.title or "New Chat").strip() or "New Chat")
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+    return SessionInfo(id=session.id, title=session.title, created_at=session.created_at.isoformat(), message_count=0)
+
+
 @router.get("/sessions", response_model=list[SessionInfo])
-async def get_all_sessions():
-    """List all chat sessions."""
-    return list_sessions()
+async def get_all_sessions(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    query = (
+        db.query(ChatSession, func.count(ChatMessage.id).label("message_count"))
+        .outerjoin(ChatMessage, ChatMessage.session_id == ChatSession.id)
+        .group_by(ChatSession.id)
+        .order_by(ChatSession.updated_at.desc(), ChatSession.created_at.desc())
+    )
+    if current_user.role != "admin":
+        query = query.filter(ChatSession.user_id == current_user.id)
 
-
-@router.get("/session/{session_id}", response_model=list[MessageItem])
-async def get_session_history(session_id: str):
-    """Get full message history for a session."""
-    session = get_session(session_id)
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found.")
+    rows = query.all()
     return [
-        MessageItem(
-            role      = m["role"],
-            content   = m["content"],
-            timestamp = m["timestamp"],
+        SessionInfo(
+            id=session.id,
+            title=session.title,
+            created_at=session.created_at.isoformat(),
+            message_count=message_count,
         )
-        for m in session["messages"]
+        for session, message_count in rows
     ]
 
 
+@router.get("/session/{session_id}", response_model=list[MessageItem])
+async def get_session_history(
+    session_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    session = _session_query_for_user(db, session_id, current_user).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found.")
+
+    messages = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.session_id == session.id)
+        .order_by(ChatMessage.timestamp.asc(), ChatMessage.id.asc())
+        .all()
+    )
+    return [_message_item(message) for message in messages]
+
+
 @router.delete("/session/{session_id}")
-async def remove_session(session_id: str):
-    """Delete a chat session."""
-    success = delete_session(session_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Session not found.")
+async def remove_session(
+    session_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    session = _session_query_for_user(db, session_id, current_user).first()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found.")
+
+    db.delete(session)
+    db.commit()
     return {"status": "deleted", "session_id": session_id}
 
 
 @router.post("/ask", response_model=ChatResponse)
-async def ask_question(body: ChatRequest):
-    """
-    Send a question and get a RAG-powered answer.
-    Automatically stores the message in the session history.
-    """
-    # Validate session
-    session = get_session(body.session_id)
+async def ask_question(
+    body: ChatRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    session = _session_query_for_user(db, body.session_id, current_user).first()
     if not session:
-        raise HTTPException(status_code=404, detail="Session not found.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found.")
 
-    # Get existing history for multi-turn context
-    history = get_history(body.session_id)
+    existing_messages = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.session_id == session.id)
+        .order_by(ChatMessage.timestamp.asc(), ChatMessage.id.asc())
+        .all()
+    )
+    history = [{"role": message.role, "content": message.content} for message in existing_messages]
 
-    # Store user message
-    add_message(body.session_id, role="user", content=body.question)
+    user_message = ChatMessage(session_id=session.id, role="user", content=body.question)
+    db.add(user_message)
 
-    # Run RAG pipeline
+    if session.title == "New Chat":
+        session.title = body.question[:50] + ("..." if len(body.question) > 50 else "")
+    session.updated_at = utcnow()
+    db.add(session)
+    db.commit()
+
     result = ask(body.question, chat_history=history)
+    answer_text = result["answer"] if result["has_answer"] else result["no_answer_reason"]
 
-    # Build answer text
-    if result["has_answer"]:
-        answer_text = result["answer"]
-    else:
-        answer_text = result["no_answer_reason"]
-
-    # Store assistant response
-    add_message(body.session_id, role="assistant", content=answer_text)
+    assistant_message = ChatMessage(
+        session_id=session.id,
+        role="assistant",
+        content=answer_text,
+        question=body.question,
+        sources=result["sources"],
+        has_conflict=result["has_conflict"],
+        conflict_note=result["conflict_note"],
+        has_answer=result["has_answer"],
+        no_answer_reason=result["no_answer_reason"],
+    )
+    session.updated_at = utcnow()
+    db.add(assistant_message)
+    db.add(session)
+    db.commit()
 
     return ChatResponse(
-        session_id       = body.session_id,
-        answer           = answer_text,
-        sources          = result["sources"],
-        has_conflict     = result["has_conflict"],
-        conflict_note    = result["conflict_note"],
-        has_answer       = result["has_answer"],
-        no_answer_reason = result["no_answer_reason"],
+        session_id=body.session_id,
+        answer=answer_text,
+        sources=result["sources"],
+        has_conflict=result["has_conflict"],
+        conflict_note=result["conflict_note"],
+        has_answer=result["has_answer"],
+        no_answer_reason=result["no_answer_reason"],
     )

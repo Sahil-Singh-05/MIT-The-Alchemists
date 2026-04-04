@@ -21,6 +21,7 @@ fastapi
 uvicorn
 python-multipart
 pydantic
+sqlalchemy
 
 # Utils
 python-dotenv

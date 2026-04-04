@@ -1,0 +1,38 @@
+.splash-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 24px;
+  background: #b174e7;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+.splash-mark {
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.32);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.splash-mark img {
+  width: 74px;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 18px;
+  image-rendering: auto;
+}
+
+.splash-title {
+  color: #fff;
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.12);
+}

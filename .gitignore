@@ -1,8 +1,9 @@
-# Environment & secrets
+# ── Secrets & environment ─────────────────────────────────────────────────────
 .env
 *.env
+groq api.txt
 
-# Python
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.pyo
@@ -11,25 +12,36 @@ venv/
 env/
 .venv/
 
-# Vector store & Chroma DB (large binary data, regenerable)
+# ── Database (auto-created on startup, never commit) ─────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Vector store (large binary, regenerable by re-ingesting docs) ─────────────
 chroma_db/
-vectorstore/
 
-# Groq API / sensitive config
-groq api.txt
+# ── Frontend build output (regenerable with npm run build) ───────────────────
+frontend/dist/
+frontend/node_modules/
+Admin\ panel/dist/
+Admin\ panel/node_modules/
 
-# IDE
+# ── Zipped build artifacts ────────────────────────────────────────────────────
+frontend.zip
+*.zip
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
 .vscode/
 .idea/
 
-# OS
+# ── OS ────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Logs
+# ── Logs ─────────────────────────────────────────────────────────────────────
 *.log
 
-# Distribution / build
+# ── Distribution / build ──────────────────────────────────────────────────────
 dist/
 build/
 *.egg-info/
