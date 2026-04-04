@@ -276,6 +276,11 @@ img {
   opacity: 0.95;
 }
 
+.sidebar__recent--empty {
+  color: rgba(255, 255, 255, 0.78);
+  cursor: default;
+}
+
 .sidebar__recent:disabled {
   cursor: default;
 }

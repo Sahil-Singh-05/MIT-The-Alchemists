@@ -31,58 +31,6 @@ const ADMIN_FILTERS = [
   { id: "email", label: "Email" },
 ];
 
-const SHOWCASE_RECENTS = [
-  { id: "mock-hackathon", title: "Hackathon Problem", placeholder: true },
-  { id: "mock-anaconda", title: "Anaconda Setup", placeholder: true },
-];
-
-const ADMIN_MOCK_DOCUMENTS = [
-  {
-    id: "admin-doc-1",
-    name: "Company Policy.pdf",
-    type: "pdf",
-    size: "1.8 MB",
-    uploadedBy: "Admin",
-    uploadDate: "Aug 6, 2024",
-    category: "HR / Policy",
-    description:
-      "This document covers organizational policy updates, reimbursement notes, and employee support workflow references for the admin knowledge base.",
-  },
-  {
-    id: "admin-doc-2",
-    name: "Pricing.xlsx",
-    type: "excel",
-    size: "183 KB",
-    uploadedBy: "Admin",
-    uploadDate: "Sep 12, 2024",
-    category: "Finance / Report",
-    description:
-      "Contains pricing models, quarterly planning sheets, and spreadsheet tabs used to answer internal finance questions.",
-  },
-  {
-    id: "admin-doc-3",
-    name: "HR Threads.eml",
-    type: "email",
-    size: "510 KB",
-    uploadedBy: "Admin",
-    uploadDate: "Oct 2, 2024",
-    category: "Inbox / Email",
-    description:
-      "Email archive containing policy confirmations and operational clarifications that can be cited in grounded responses.",
-  },
-  {
-    id: "admin-doc-4",
-    name: "Refund Policy.pdf",
-    type: "pdf",
-    size: "2.4 MB",
-    uploadedBy: "Admin",
-    uploadDate: "Jul 17, 2024",
-    category: "Customer / Policy",
-    description:
-      "Details refund timelines, case-management rules, and policy exceptions for support and operations teams.",
-  },
-];
-
 function buildUrl(path) {
   return `${API_BASE_URL}${path}`;
 }
@@ -392,9 +340,7 @@ function App() {
   const visibleSessions = sessions.filter((session) =>
     session.title.toLowerCase().includes(deferredQuery.trim().toLowerCase()),
   );
-  const recentSessions = sessions.length
-    ? sessions.slice(0, 2).map((session) => ({ ...session, placeholder: false }))
-    : SHOWCASE_RECENTS;
+  const recentSessions = sessions.slice(0, 2);
   const filteredAdminDocuments = useMemo(() => {
     return adminDocuments
       .filter((doc) => (adminFilter === "all" ? true : doc.type === adminFilter))
@@ -468,15 +414,6 @@ function App() {
     input.style.height = "0px";
     input.style.height = `${Math.min(input.scrollHeight, 220)}px`;
   }, [draft, activeView, messages.length]);
-
-  useEffect(() => {
-    const seededDocuments = ADMIN_MOCK_DOCUMENTS.map((doc) => ({
-      ...doc,
-      previewUrl: buildAdminPreviewUrl(doc),
-    }));
-
-    setAdminDocuments(seededDocuments);
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -1173,17 +1110,20 @@ function App() {
             </div>
 
             <div className="sidebar__recents">
-              {recentSessions.map((session) => (
-                <button
-                  className="sidebar__recent"
-                  disabled={session.placeholder}
-                  key={session.id}
-                  type="button"
-                  onClick={() => openSession(session.id)}
-                >
-                  {truncateLabel(session.title, 22)}
-                </button>
-              ))}
+              {recentSessions.length ? (
+                recentSessions.map((session) => (
+                  <button
+                    className="sidebar__recent"
+                    key={session.id}
+                    type="button"
+                    onClick={() => openSession(session.id)}
+                  >
+                    {truncateLabel(session.title, 22)}
+                  </button>
+                ))
+              ) : (
+                <span className="sidebar__recent sidebar__recent--empty">No recent chats</span>
+              )}
             </div>
           </div>
 
